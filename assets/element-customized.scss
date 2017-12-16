@@ -1,0 +1,29 @@
+.el-menu--horizontal {
+  .el-submenu {
+    &[float='right'] {
+      float: right;
+
+      > .el-menu {
+        left: initial;
+        right: 0;
+      }
+    }
+  }
+}
+
+.el-table {
+  th > .cell,
+  .cell {
+    word-break: keep-all;
+    line-height: inherit;
+  }
+
+  &.compact {
+    font-size: 12px;
+
+    .cell {
+      padding-left: 9px;
+      padding-right: 9px;
+    }
+  }
+}

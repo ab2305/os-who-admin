@@ -1,0 +1,25 @@
+body {
+  margin: initial;
+  overflow-y: scroll;
+}
+
+a {
+  &:link {
+    color: $link;
+    text-decoration: initial;
+  }
+
+  &:visited {
+    color: $link;
+  }
+
+  &:focus,
+  &:hover {
+    color: lighten($link, 10%);
+    text-decoration: underline;
+  }
+
+  &:active {
+    color: darken($link, 10%);
+  }
+}

@@ -1,0 +1,30 @@
+@import 'variables';
+@import 'normalize';
+@import 'utils';
+
+/* Global */
+$min-width: 960px;
+$max-width: 1280px;
+
+#__nuxt {
+  min-width: $min-width;
+  max-width: $max-width;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.content {
+  padding: $gutter-y $gutter-x;
+}
+
+/* Nuxt-related */
+.page-enter-active,
+.page-leave-active {
+  transition-property: opacity;
+  transition-duration: 300ms;
+}
+
+.page-enter,
+.page-leave-to {
+  opacity: 0;
+}
