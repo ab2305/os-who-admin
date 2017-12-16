@@ -1,2 +1,0 @@
-webpackJsonp([24],{"2Vrk":function(a,b){"use strict";b.a={layout:"authorized",data:function(){return{id:this.$route.params.id}}}},PNoC:function(a,b,c){"use strict";Object.defineProperty(b,"__esModule",{value:!0});var d=c("2Vrk"),e=c("ho/P"),f=c("VU/8"),g=f(d.a,e.a,null,null,null);b["default"]=g.exports},"ho/P":function(a,b){"use strict";b.a={render:function(){var a=this,b=a.$createElement,c=a._self._c||b;return c("div",[a._v("\n  notice "+a._s(a.id)+"\n")])},staticRenderFns:[]}}});
-//# sourceMappingURL=index.cee0b808a6be7d2e5752.js.map
