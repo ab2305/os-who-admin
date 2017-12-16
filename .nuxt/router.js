@@ -6,22 +6,23 @@ Vue.use(Router)
 const _2c3737e7 = () => import('../pages/index.vue' /* webpackChunkName: "pages/index" */).then(m => m.default || m)
 const _33054c58 = () => import('../pages/reload.vue' /* webpackChunkName: "pages/reload" */).then(m => m.default || m)
 const _1c7b4229 = () => import('../pages/dashboard.vue' /* webpackChunkName: "pages/dashboard" */).then(m => m.default || m)
-const _14424a04 = () => import('../pages/login.vue' /* webpackChunkName: "pages/login" */).then(m => m.default || m)
 const _130d8d45 = () => import('../pages/logout.vue' /* webpackChunkName: "pages/logout" */).then(m => m.default || m)
-const _efdd1c5a = () => import('../pages/operation/privacies.vue' /* webpackChunkName: "pages/operation/privacies" */).then(m => m.default || m)
-const _bcc1de1c = () => import('../pages/operation/qnas.vue' /* webpackChunkName: "pages/operation/qnas" */).then(m => m.default || m)
-const _24de4334 = () => import('../pages/operation/terms.vue' /* webpackChunkName: "pages/operation/terms" */).then(m => m.default || m)
-const _0c0d4308 = () => import('../pages/operation/notices.vue' /* webpackChunkName: "pages/operation/notices" */).then(m => m.default || m)
-const _3d5230b2 = () => import('../pages/operation/admins.vue' /* webpackChunkName: "pages/operation/admins" */).then(m => m.default || m)
+const _14424a04 = () => import('../pages/login.vue' /* webpackChunkName: "pages/login" */).then(m => m.default || m)
 const _d2e2aa00 = () => import('../pages/operation/faqs.vue' /* webpackChunkName: "pages/operation/faqs" */).then(m => m.default || m)
-const _00566226 = () => import('../pages/stats/users.vue' /* webpackChunkName: "pages/stats/users" */).then(m => m.default || m)
+const _bcc1de1c = () => import('../pages/operation/qnas.vue' /* webpackChunkName: "pages/operation/qnas" */).then(m => m.default || m)
+const _efdd1c5a = () => import('../pages/operation/privacies.vue' /* webpackChunkName: "pages/operation/privacies" */).then(m => m.default || m)
+const _3d5230b2 = () => import('../pages/operation/admins.vue' /* webpackChunkName: "pages/operation/admins" */).then(m => m.default || m)
 const _16351b6e = () => import('../pages/operation/notes.vue' /* webpackChunkName: "pages/operation/notes" */).then(m => m.default || m)
-const _2ca00a40 = () => import('../pages/operation/term/new.vue' /* webpackChunkName: "pages/operation/term/new" */).then(m => m.default || m)
-const _000cfa8c = () => import('../pages/operation/notice/new.vue' /* webpackChunkName: "pages/operation/notice/new" */).then(m => m.default || m)
-const _f60dc4e6 = () => import('../pages/operation/admin/new.vue' /* webpackChunkName: "pages/operation/admin/new" */).then(m => m.default || m)
-const _798d4386 = () => import('../pages/operation/privacy/new.vue' /* webpackChunkName: "pages/operation/privacy/new" */).then(m => m.default || m)
-const _092eef94 = () => import('../pages/operation/faq/new.vue' /* webpackChunkName: "pages/operation/faq/new" */).then(m => m.default || m)
+const _24de4334 = () => import('../pages/operation/terms.vue' /* webpackChunkName: "pages/operation/terms" */).then(m => m.default || m)
+const _00566226 = () => import('../pages/stats/users.vue' /* webpackChunkName: "pages/stats/users" */).then(m => m.default || m)
+const _0c0d4308 = () => import('../pages/operation/notices.vue' /* webpackChunkName: "pages/operation/notices" */).then(m => m.default || m)
+const _143036f0 = () => import('../pages/app/app.vue' /* webpackChunkName: "pages/app/app" */).then(m => m.default || m)
 const _5a36ff34 = () => import('../pages/operation/note/new.vue' /* webpackChunkName: "pages/operation/note/new" */).then(m => m.default || m)
+const _092eef94 = () => import('../pages/operation/faq/new.vue' /* webpackChunkName: "pages/operation/faq/new" */).then(m => m.default || m)
+const _000cfa8c = () => import('../pages/operation/notice/new.vue' /* webpackChunkName: "pages/operation/notice/new" */).then(m => m.default || m)
+const _798d4386 = () => import('../pages/operation/privacy/new.vue' /* webpackChunkName: "pages/operation/privacy/new" */).then(m => m.default || m)
+const _2ca00a40 = () => import('../pages/operation/term/new.vue' /* webpackChunkName: "pages/operation/term/new" */).then(m => m.default || m)
+const _f60dc4e6 = () => import('../pages/operation/admin/new.vue' /* webpackChunkName: "pages/operation/admin/new" */).then(m => m.default || m)
 const _4c5b4650 = () => import('../pages/users/user/_id.vue' /* webpackChunkName: "pages/users/user/_id" */).then(m => m.default || m)
 const _928350ae = () => import('../pages/operation/notice/_id/index.vue' /* webpackChunkName: "pages/operation/notice/_id/index" */).then(m => m.default || m)
 const _46f872a2 = () => import('../pages/operation/term/_id/edit.vue' /* webpackChunkName: "pages/operation/term/_id/edit" */).then(m => m.default || m)
@@ -86,39 +87,14 @@ export function createRouter () {
 			name: "dashboard"
 		},
 		{
-			path: "/login",
-			component: _14424a04,
-			name: "login"
-		},
-		{
 			path: "/logout",
 			component: _130d8d45,
 			name: "logout"
 		},
 		{
-			path: "/operation/privacies",
-			component: _efdd1c5a,
-			name: "operation-privacies"
-		},
-		{
-			path: "/operation/qnas",
-			component: _bcc1de1c,
-			name: "operation-qnas"
-		},
-		{
-			path: "/operation/terms",
-			component: _24de4334,
-			name: "operation-terms"
-		},
-		{
-			path: "/operation/notices",
-			component: _0c0d4308,
-			name: "operation-notices"
-		},
-		{
-			path: "/operation/admins",
-			component: _3d5230b2,
-			name: "operation-admins"
+			path: "/login",
+			component: _14424a04,
+			name: "login"
 		},
 		{
 			path: "/operation/faqs",
@@ -126,9 +102,19 @@ export function createRouter () {
 			name: "operation-faqs"
 		},
 		{
-			path: "/stats/users",
-			component: _00566226,
-			name: "stats-users"
+			path: "/operation/qnas",
+			component: _bcc1de1c,
+			name: "operation-qnas"
+		},
+		{
+			path: "/operation/privacies",
+			component: _efdd1c5a,
+			name: "operation-privacies"
+		},
+		{
+			path: "/operation/admins",
+			component: _3d5230b2,
+			name: "operation-admins"
 		},
 		{
 			path: "/operation/notes",
@@ -136,24 +122,29 @@ export function createRouter () {
 			name: "operation-notes"
 		},
 		{
-			path: "/operation/term/new",
-			component: _2ca00a40,
-			name: "operation-term-new"
+			path: "/operation/terms",
+			component: _24de4334,
+			name: "operation-terms"
 		},
 		{
-			path: "/operation/notice/new",
-			component: _000cfa8c,
-			name: "operation-notice-new"
+			path: "/stats/users",
+			component: _00566226,
+			name: "stats-users"
 		},
 		{
-			path: "/operation/admin/new",
-			component: _f60dc4e6,
-			name: "operation-admin-new"
+			path: "/operation/notices",
+			component: _0c0d4308,
+			name: "operation-notices"
 		},
 		{
-			path: "/operation/privacy/new",
-			component: _798d4386,
-			name: "operation-privacy-new"
+			path: "/app/app",
+			component: _143036f0,
+			name: "app-app"
+		},
+		{
+			path: "/operation/note/new",
+			component: _5a36ff34,
+			name: "operation-note-new"
 		},
 		{
 			path: "/operation/faq/new",
@@ -161,9 +152,24 @@ export function createRouter () {
 			name: "operation-faq-new"
 		},
 		{
-			path: "/operation/note/new",
-			component: _5a36ff34,
-			name: "operation-note-new"
+			path: "/operation/notice/new",
+			component: _000cfa8c,
+			name: "operation-notice-new"
+		},
+		{
+			path: "/operation/privacy/new",
+			component: _798d4386,
+			name: "operation-privacy-new"
+		},
+		{
+			path: "/operation/term/new",
+			component: _2ca00a40,
+			name: "operation-term-new"
+		},
+		{
+			path: "/operation/admin/new",
+			component: _f60dc4e6,
+			name: "operation-admin-new"
 		},
 		{
 			path: "/users/user/:id?",
