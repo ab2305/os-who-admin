@@ -122,7 +122,7 @@
         </el-table-column>
         <el-table-column label="이름(아이디)1">
           <template scope="scope">
-            <nuxt-link :to="`/users/user/${scope.row.id}`">
+            <nuxt-link :to="`/users/active`">
               {{ scope.row.name }}
               <br>
               {{ scope.row.email }}
@@ -156,6 +156,10 @@
             {{ scope.row.lastLoginedAt | moment('lll') }}
           </template>
         </el-table-column>
+        <el-table-column laebel="신고횟수" width="50">
+        	<template scope="scope">
+        		{{scope.row}}
+        	</template>        
       </el-table>
     </div>
 
