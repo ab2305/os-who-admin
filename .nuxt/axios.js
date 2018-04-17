@@ -73,8 +73,8 @@ function errorHandler(error, ctx) {
 
 // Setup BaseURL
 const baseURL = process.browser
-  ? (process.env.API_URL_BROWSER || 'http://api.nuguga.kr/')
-  : (process.env.API_URL || 'http://api.nuguga.kr/')
+  ? (process.env.API_URL_BROWSER || 'http://localhost:8020/')
+  : (process.env.API_URL || 'http://localhost:8020/')
 
 // Custom init hook
 

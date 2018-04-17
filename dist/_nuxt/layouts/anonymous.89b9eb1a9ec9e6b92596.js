@@ -1,2 +1,0 @@
-webpackJsonp([33],{"IP4/":function(a,b){"use strict";b.a={middleware:["anonymous"]}},PGEJ:function(a,b){"use strict";b.a={render:function(){var a=this,b=a.$createElement,c=a._self._c||b;return c("div",[c("div",{staticClass:"content"},[c("nuxt")],1)])},staticRenderFns:[]}},YWdb:function(a,b,c){"use strict";Object.defineProperty(b,"__esModule",{value:!0});var d=c("IP4/"),e=c("PGEJ"),f=c("VU/8"),g=f(d.a,e.a,null,null,null);b["default"]=g.exports}});
-//# sourceMappingURL=anonymous.89b9eb1a9ec9e6b92596.js.map

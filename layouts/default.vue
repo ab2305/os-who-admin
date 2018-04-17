@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div class="content">
-      <nuxt></nuxt>
+    <div>
+        <div class="content">
+            <nuxt></nuxt>
+        </div>
     </div>
-  </div>
-</template>
+</template>;

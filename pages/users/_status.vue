@@ -159,7 +159,8 @@
         <el-table-column laebel="신고횟수" width="50">
         	<template scope="scope">
         		{{scope.row}}
-        	</template>        
+        	</template>   
+        </el-table-column>     
       </el-table>
     </div>
 
