@@ -1,2 +1,0 @@
-webpackJsonp([25],{FVXU:function(a,b){"use strict";b.a={layout:"authorized",data:function(){return{id:this.$route.params.id}}}},PNoC:function(a,b,c){"use strict";Object.defineProperty(b,"__esModule",{value:!0});var d=c("FVXU"),e=c("ho/P"),f=c("VU/8"),g=f(d.a,e.a,null,null,null);b["default"]=g.exports},"ho/P":function(a,b){"use strict";b.a={render:function(){var a=this,b=a.$createElement,c=a._self._c||b;return c("div",[a._v("\n  notice "+a._s(a.id)+"\n")])},staticRenderFns:[]}}});
-//# sourceMappingURL=index.3faa016a18fc76b70b48.js.map

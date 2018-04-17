@@ -1,5 +1,5 @@
 module.exports = {
   axios: {
-    baseURL: 'http://localhost:8020',
+    baseURL: 'http://api.nuguga.kr',
   },
 }
