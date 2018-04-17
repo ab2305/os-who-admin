@@ -26,45 +26,45 @@
 
 <script>
 export default {
-	layout: 'authorized',
+layout: "authorized",
 
-	async asyncData({ app }) {
-		const list = await app.$axios.$get('/other-notices', {
-			params: { category: 'term' },
-		})
+async asyncData({ app }) {
+const list = await app.$axios.$get("/other-notices", {
+params: { category: "term" },
+})
 
-		return { list }
-	},
-	data() {
-		return {
-			multipleSelection: [],
-		}
-	},
-	methods: {
-		handleSelectionChange(val) {
-			this.multipleSelection = val
-		},
-		async deleteTerms() {
-			try {
-				const promises = this.multipleSelection
-					.map(async ({ id }) => this.$axios.$delete(`/other-notices/${id}`, {
-						params: { category: 'term' },
-					}))
+return { list }
+},
+data() {
+return {
+multipleSelection: [],
+}
+},
+methods: {
+handleSelectionChange(val) {
+this.multipleSelection = val
+},
+async deleteTerms() {
+try {
+const promises = this.multipleSelection
+.map(async ({ id }) => this.$axios.$delete(`/other-notices/${id}`, {
+params: { category: "term" },
+}))
 
-				await Promise.all(promises)
+await Promise.all(promises)
 
-				this.$notify({
-					message: '이용약관을 삭제했습니다.',
-				})
+this.$notify({
+message: "이용약관을 삭제했습니다.",
+})
 
-				this.$router.replace('/reload')
-			} catch (error) {
-				this.$notify({
-					type: 'error',
-					message: error,
-				})
-			}
-		},
-	},
+this.$router.replace("/reload")
+} catch (error) {
+this.$notify({
+type: "error",
+message: error,
+})
+}
+},
+},
 }
 </script>

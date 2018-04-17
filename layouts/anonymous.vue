@@ -8,6 +8,6 @@
 
 <script>
 export default {
-	middleware: ['anonymous'],
+middleware: ["anonymous"],
 }
 </script>

@@ -157,10 +157,10 @@
           </template>
         </el-table-column>
         <el-table-column laebel="신고횟수" width="50">
-        	<template scope="scope">
-        		{{scope.row}}
-        	</template> 
-        </el-table-column>       
+            <template scope="scope">
+                {{scope.row}}
+            </template>
+        </el-table-column>
       </el-table>
     </div>
 
@@ -172,183 +172,183 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import csvStringify from 'csv-stringify'
-import FileSaver from 'file-saver'
+import _ from "lodash"
+import csvStringify from "csv-stringify"
+import FileSaver from "file-saver"
 
 export default {
-	layout: 'authorized',
-	validate: ({ params }) => /^(:?active|deleted)$/.test(params.status),
+layout: "authorized",
+validate: ({ params }) => /^(:?active|deleted)$/.test(params.status),
 
-	async asyncData({ app, route }) {
-		const endpoint = route.params.status === 'active' ? 'users' : 'seceders'
+async asyncData({ app, route }) {
+const endpoint = route.params.status === "active" ? "users" : "seceders"
 
-		const list = await app.$axios.$get(`/${endpoint}`)
+const list = await app.$axios.$get(`/${endpoint}`)
 
-		const filteredList = _.cloneDeep(list)
+const filteredList = _.cloneDeep(list)
 
-		return { list, filteredList }
-	},
-	data() {
-		return {
-			filterOptions: {
-				signupDate: {
-					shortcuts: [
-						{
-							text: '전체',
-							onClick: (picker) => {
-								picker.$emit('pick', [null, null])
-							},
-						},
-						{
-							text: '어제',
-							onClick: (picker) => {
-								const start = this.getToday().subtract(1, 'day')
-								const end = this.getToday().subtract(1, 'day')
+return { list, filteredList }
+},
+data() {
+return {
+filterOptions: {
+signupDate: {
+shortcuts: [
+{
+text: "전체",
+onClick: (picker) => {
+picker.$emit("pick", [null, null])
+},
+},
+{
+text: "어제",
+onClick: (picker) => {
+const start = this.getToday().subtract(1, "day")
+const end = this.getToday().subtract(1, "day")
 
-								picker.$emit('pick', [start, end])
-							},
-						},
-						{
-							text: '최근1주',
-							onClick: (picker) => {
-								const start = this.getToday().subtract(6, 'day')
-								const end = this.getToday()
+picker.$emit("pick", [start, end])
+},
+},
+{
+text: "최근1주",
+onClick: (picker) => {
+const start = this.getToday().subtract(6, "day")
+const end = this.getToday()
 
-								picker.$emit('pick', [start, end])
-							},
-						},
-						{
-							text: '이번달',
-							onClick: (picker) => {
-								const start = this.getToday().startOf('month')
-								const end = this.getToday()
+picker.$emit("pick", [start, end])
+},
+},
+{
+text: "이번달",
+onClick: (picker) => {
+const start = this.getToday().startOf("month")
+const end = this.getToday()
 
-								picker.$emit('pick', [start, end])
-							},
-						},
-						{
-							text: '지난달',
-							onClick: (picker) => {
-								const start = this.getToday().subtract(1, 'month').startOf('month')
-								const end = this.getToday().subtract(1, 'month').endOf('month').startOf('day')
+picker.$emit("pick", [start, end])
+},
+},
+{
+text: "지난달",
+onClick: (picker) => {
+const start = this.getToday().subtract(1, "month").startOf("month")
+const end = this.getToday().subtract(1, "month").endOf("month").startOf("day")
 
-								picker.$emit('pick', [start, end])
-							},
-						},
-					],
-				},
-				birthYearFrom: {
-					disabledDate: date => this.form.birthYearRange[1] && date > this.form.birthYearRange[1]
-					,
-				},
-				birthYearTo: {
-					disabledDate: date => this.form.birthYearRange[0] && date < this.form.birthYearRange[0]
-					,
-				},
-			},
-			form: {
-				signupDateRange: [null, null],
-				birthYearRange: [null, null],
-				sex: undefined,
-				status: undefined,
-				category: 'name',
-				query: '',
-			},
-		}
-	},
-	methods: {
-		getToday() {
-			return this.$moment().startOf('day')
-		},
-		filter() {
-			const {
-				signupDateRange, birthYearRange, sex, status, category, query,
-			} = this.form
+picker.$emit("pick", [start, end])
+},
+},
+],
+},
+birthYearFrom: {
+disabledDate: date => this.form.birthYearRange[1] && date > this.form.birthYearRange[1]
+,
+},
+birthYearTo: {
+disabledDate: date => this.form.birthYearRange[0] && date < this.form.birthYearRange[0]
+,
+},
+},
+form: {
+signupDateRange: [null, null],
+birthYearRange: [null, null],
+sex: undefined,
+status: undefined,
+category: "name",
+query: "",
+},
+}
+},
+methods: {
+getToday() {
+return this.$moment().startOf("day")
+},
+filter() {
+const {
+signupDateRange, birthYearRange, sex, status, category, query,
+} = this.form
 
-			const filteredList = _.chain(this.list).filter(((user) => {
-				if (signupDateRange[0] && signupDateRange[1]) {
-					if (!this.$moment(user.createdAt).isBetween(
-						signupDateRange[0],
-						signupDateRange[1],
-						'day',
-						'[]',
-					)) {
-						return false
-					}
-				}
+const filteredList = _.chain(this.list).filter(((user) => {
+if (signupDateRange[0] && signupDateRange[1]) {
+if (!this.$moment(user.createdAt).isBetween(
+signupDateRange[0],
+signupDateRange[1],
+"day",
+"[]",
+)) {
+return false
+}
+}
 
-				if (birthYearRange[0] && birthYearRange[1]) {
-					if (!this.$moment(user.birthYear, 'YYYY').isBetween(
-						birthYearRange[0],
-						birthYearRange[1],
-						'year',
-						'[]',
-					)) {
-						return false
-					}
-				}
+if (birthYearRange[0] && birthYearRange[1]) {
+if (!this.$moment(user.birthYear, "YYYY").isBetween(
+birthYearRange[0],
+birthYearRange[1],
+"year",
+"[]",
+)) {
+return false
+}
+}
 
-				if (sex) {
-					if (user.gender !== sex) {
-						return false
-					}
-				}
+if (sex) {
+if (user.gender !== sex) {
+return false
+}
+}
 
-				if (status) {
-					if (this.$options.filters.getUserStatus(user, 'value') !== status) {
-						return false
-					}
-				}
+if (status) {
+if (this.$options.filters.getUserStatus(user, "value") !== status) {
+return false
+}
+}
 
-				if (query) {
-					if (!user[category].toLowerCase().includes(query.toLowerCase())) {
-						return false
-					}
-				}
+if (query) {
+if (!user[category].toLowerCase().includes(query.toLowerCase())) {
+return false
+}
+}
 
-				return true
-			})).value()
+return true
+})).value()
 
-			this.filteredList = filteredList
-		},
-		download(isAll = true) {
-			const list = isAll ? this.list : this.filteredList
+this.filteredList = filteredList
+},
+download(isAll = true) {
+const list = isAll ? this.list : this.filteredList
 
-			const formatted = [['No', '등급', '이름', '아이디', '휴대폰', '닉네임', '성별', '생년', '누구친 등록수', '우표', '무제한 이용권', '결제건수', '회원가입일', '최근접속일']]
+const formatted = [["No", "등급", "이름", "아이디", "휴대폰", "닉네임", "성별", "생년", "누구친 등록수", "우표", "무제한 이용권", "결제건수", "회원가입일", "최근접속일"]]
 
-			formatted.push(...list.map(user => [
-				user.id,
-				this.$options.filters.getUserStatus(user, 'value'),
-				user.name,
-				user.email,
-				user.phone,
-				user.nickname,
-				user.gender,
-				user.birthYear,
-				user.userInvitees.length,
-				this.$options.filters.getUserStampsCount(user),
-				this.$options.filters.getUserPassInfo(user),
-				user.billingHistories.length,
-				this.$options.filters.moment(user.createdAt, 'lll'),
-				this.$options.filters.moment(user.lastLoginedAt, 'lll'),
-			]))
+formatted.push(...list.map(user => [
+user.id,
+this.$options.filters.getUserStatus(user, "value"),
+user.name,
+user.email,
+user.phone,
+user.nickname,
+user.gender,
+user.birthYear,
+user.userInvitees.length,
+this.$options.filters.getUserStampsCount(user),
+this.$options.filters.getUserPassInfo(user),
+user.billingHistories.length,
+this.$options.filters.moment(user.createdAt, "lll"),
+this.$options.filters.moment(user.lastLoginedAt, "lll"),
+]))
 
-			const download = (error, output) => {
-				const blob = new Blob(
-					[output],
-					{ type: 'text/plain;charset=utf-8' },
-				)
+const download = (error, output) => {
+const blob = new Blob(
+[output],
+{ type: "text/plain;charset=utf-8" },
+)
 
-				FileSaver.saveAs(
-					blob,
-					`users ${isAll ? 'all' : 'filtered'} ${this.$moment().format('lll')}.csv`,
-				)
-			}
+FileSaver.saveAs(
+blob,
+`users ${isAll ? "all" : "filtered"} ${this.$moment().format("lll")}.csv`,
+)
+}
 
-			csvStringify(formatted, download)
-		},
-	},
+csvStringify(formatted, download)
+},
+},
 }
 </script>
 

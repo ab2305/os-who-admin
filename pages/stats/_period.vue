@@ -103,253 +103,253 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import moment from 'moment'
-import csvStringify from 'csv-stringify'
-import FileSaver from 'file-saver'
-import ElFormItem from '../../node_modules/element-ui/packages/form/src/form-item.vue'
+import _ from "lodash"
+import moment from "moment"
+import csvStringify from "csv-stringify"
+import FileSaver from "file-saver"
+import ElFormItem from "../../node_modules/element-ui/packages/form/src/form-item.vue"
 
 export default {
-	components: { ElFormItem },
-	layout: 'authorized',
-	validate: ({ params }) => /^(:?daily|monthly)$/.test(params.period),
-	async asyncData({ app, route }) {
-		const point = route.params.period
-		const count = (point === 'daily') ? 7 : 3
+components: { ElFormItem },
+layout: "authorized",
+validate: ({ params }) => /^(:?daily|monthly)$/.test(params.period),
+async asyncData({ app, route }) {
+const point = route.params.period
+const count = (point === "daily") ? 7 : 3
 
-		const periodData = await app.$axios.$get(`/stats/${point}`, {
-			params: {
-				count,
-			},
-		})
+const periodData = await app.$axios.$get(`/stats/${point}`, {
+params: {
+count,
+},
+})
 
-		return { periodData }
-	},
-	methods: {
-		getToday() {
-			return this.$moment().startOf('day')
-		},
-		getSummaries(param) {
-			const { columns, data } = param
-			const sums = []
-			columns.forEach((column, index) => {
-				if (index === 0) {
-					sums[index] = '합계'
-					return
-				}
-				const values = data.map(item => Number(item[column.property]))
-				if (!values.every(value => _.isNaN(value))) {
-					sums[index] = `${values.reduce((prev, curr) => {
-						const value = Number(curr)
-						if (!_.isNaN(value)) {
-							return prev + curr
-						}
-						return prev
-					}, 0)}`
-				} else {
-					sums[index] = ''
-				}
-			})
+return { periodData }
+},
+methods: {
+getToday() {
+return this.$moment().startOf("day")
+},
+getSummaries(param) {
+const { columns, data } = param
+const sums = []
+columns.forEach((column, index) => {
+if (index === 0) {
+sums[index] = "합계"
+return
+}
+const values = data.map(item => Number(item[column.property]))
+if (!values.every(value => _.isNaN(value))) {
+sums[index] = `${values.reduce((prev, curr) => {
+const value = Number(curr)
+if (!_.isNaN(value)) {
+return prev + curr
+}
+return prev
+}, 0)}`
+} else {
+sums[index] = ""
+}
+})
 
-			return sums
-		},
+return sums
+},
 
-		async download(isAll = true) {
-			const startDate = moment('2017-09')
-			const nowDate = moment()
+async download(isAll = true) {
+const startDate = moment("2017-09")
+const nowDate = moment()
 
-			const allList = await this.$axios.$get('/stats/users', {
-				params: {
-					year: startDate.year(),
-					month: startDate.month() + 1,
-					count: nowDate.diff(startDate, 'months') + 1,
-				},
-			})
+const allList = await this.$axios.$get("/stats/users", {
+params: {
+year: startDate.year(),
+month: startDate.month() + 1,
+count: nowDate.diff(startDate, "months") + 1,
+},
+})
 
-			const list = isAll ? allList : this.periodData
+const list = isAll ? allList : this.periodData
 
-			const formatted = [['날짜', '우표 결제건수', '이용권 결제건수', '계', '우표 결제금액', '이용권 결제금액', '계', '누구야 가입수', '누구야 탈퇴수', '누구친 등록수', '누구친 가입수']]
+const formatted = [["날짜", "우표 결제건수", "이용권 결제건수", "계", "우표 결제금액", "이용권 결제금액", "계", "누구야 가입수", "누구야 탈퇴수", "누구친 등록수", "누구친 가입수"]]
 
-			formatted.push(...list.map(data => [
-				moment(data.date).format('YY-MM-DD (ddd)'),
-				data.stampCount,
-				data.subscriptionCount,
-				data.allBillingCount,
-				data.stampSales,
-				data.subscriptionSales,
-				data.allSales,
-				data.usersCount,
-				data.secedersCount,
-				data.inviteesCount,
-				data.lgoinInviteesCount,
-			]))
+formatted.push(...list.map(data => [
+moment(data.date).format("YY-MM-DD (ddd)"),
+data.stampCount,
+data.subscriptionCount,
+data.allBillingCount,
+data.stampSales,
+data.subscriptionSales,
+data.allSales,
+data.usersCount,
+data.secedersCount,
+data.inviteesCount,
+data.lgoinInviteesCount,
+]))
 
-			const download = (error, output) => {
-				const blob = new Blob(
-					[output],
-					{ type: 'text/plain; charset=utf-8' },
-				)
+const download = (error, output) => {
+const blob = new Blob(
+[output],
+{ type: "text/plain; charset=utf-8" },
+)
 
-				FileSaver.saveAs(
-					blob,
-					`userstatics ${isAll ? 'all' : 'filtered'} ${this.$moment().format('lll')}.csv`,
-				)
-			}
+FileSaver.saveAs(
+blob,
+`userstatics ${isAll ? "all" : "filtered"} ${this.$moment().format("lll")}.csv`,
+)
+}
 
-			csvStringify(formatted, download)
-		},
+csvStringify(formatted, download)
+},
 
-		inquiry(params) {
-			return (this.period === 'monthly') ? this.monthlyInquiry(params) : this.dailyInquiry(params)
-		},
+inquiry(params) {
+return (this.period === "monthly") ? this.monthlyInquiry(params) : this.dailyInquiry(params)
+},
 
-		dailyInquiry(params) {
-			const flag = params === 3
+dailyInquiry(params) {
+const flag = params === 3
 
-			if (params < 8) {
-				this.frm.year = moment().format('YYYY')
-				this.frm.month = params === 6 ? moment().format('MM') : String(Number(moment().format('MM')) - 1)
-			} else {
-				this.frm.year = moment(this.frm.year).format('YYYY')
-				this.frm.month = moment(this.frm.month).format('MM')
-			}
+if (params < 8) {
+this.frm.year = moment().format("YYYY")
+this.frm.month = params === 6 ? moment().format("MM") : String(Number(moment().format("MM")) - 1)
+} else {
+this.frm.year = moment(this.frm.year).format("YYYY")
+this.frm.month = moment(this.frm.month).format("MM")
+}
 
-			this.getAxiosData(flag)
-		},
+this.getAxiosData(flag)
+},
 
-		monthlyInquiry(params) {
-			this.frm.count = params
+monthlyInquiry(params) {
+this.frm.count = params
 
-			if (params === 7) {
-				this.frm.count = moment().format('MM')
-			} else if (params === 8) {
-				// 뒤에 년 월과 count 보내면 됨
-				this.till.month = moment(this.till.month).format('MM')
-				this.till.year = moment(this.till.year).format('YYYY')
+if (params === 7) {
+this.frm.count = moment().format("MM")
+} else if (params === 8) {
+// 뒤에 년 월과 count 보내면 됨
+this.till.month = moment(this.till.month).format("MM")
+this.till.year = moment(this.till.year).format("YYYY")
 
-				this.frm.month = moment(this.frm.month).format('MM')
-				this.frm.year = moment(this.frm.year).format('YYYY')
+this.frm.month = moment(this.frm.month).format("MM")
+this.frm.year = moment(this.frm.year).format("YYYY")
 
-				const till = moment([this.till.year, this.till.month])
-				const frm = moment([this.frm.year, this.frm.month])
+const till = moment([this.till.year, this.till.month])
+const frm = moment([this.frm.year, this.frm.month])
 
-				this.frm.count = till.diff(frm, 'months') + 1
-			}
+this.frm.count = till.diff(frm, "months") + 1
+}
 
-			this.getAxiosData(true, params)
-		},
+this.getAxiosData(true, params)
+},
 
-		getAxiosData(flag = false, key1) {
-			const params = {}
+getAxiosData(flag = false, key1) {
+const params = {}
 
-			if (flag) {
-				params.count = this.frm.count
-				params.year = (this.till.year) ? this.till.year : undefined
-				params.month = (this.till.month) ? this.till.month : undefined
-			} else {
-				params.month = this.frm.month
-				params.year = this.frm.year
-				params.count = key1 === 4 ? this.frm.count : undefined
-			}
+if (flag) {
+params.count = this.frm.count
+params.year = (this.till.year) ? this.till.year : undefined
+params.month = (this.till.month) ? this.till.month : undefined
+} else {
+params.month = this.frm.month
+params.year = this.frm.year
+params.count = key1 === 4 ? this.frm.count : undefined
+}
 
-			this.$axios.$get(`/stats/${this.period}`, {
-				params,
-			}).catch(error => Promise.reject(error))
-				.then((res) => {
-					this.periodData = res
-				})
-		},
+this.$axios.$get(`/stats/${this.period}`, {
+params,
+}).catch(error => Promise.reject(error))
+.then((res) => {
+this.periodData = res
+})
+},
 
-		getQueryPeriod(res) {
-			const till = moment([this.till.year, this.till.month])
-			const value = _.filter(res, (time) => {
-				moment(time.date).isBefore(moment(till))
-			})
-			console.log(value)
-		},
+getQueryPeriod(res) {
+const till = moment([this.till.year, this.till.month])
+const value = _.filter(res, (time) => {
+moment(time.date).isBefore(moment(till))
+})
+console.log(value)
+},
 
-		differDate(value) {
-			const date = moment(value)
-			return (this.period === 'daily') ? date.format('ll') : date.format('LL')
-		},
-	},
-	mounted() {
-		this.tab = (this.period === 'monthly') ? {
-			category: '월간 통계',
-			firstFilter: '최근 3개월',
-			secondFilter: '최근 6개월',
-			thirdFilter: '올해',
-		} : {
-			category: '일간 통계',
-			firstFilter: '최근 1주',
-			secondFilter: '이번달',
-			thirdFilter: '지난달',
-		}
+differDate(value) {
+const date = moment(value)
+return (this.period === "daily") ? date.format("ll") : date.format("LL")
+},
+},
+mounted() {
+this.tab = (this.period === "monthly") ? {
+category: "월간 통계",
+firstFilter: "최근 3개월",
+secondFilter: "최근 6개월",
+thirdFilter: "올해",
+} : {
+category: "일간 통계",
+firstFilter: "최근 1주",
+secondFilter: "이번달",
+thirdFilter: "지난달",
+}
 
-		this.frm.year = moment().format('YYYY')
-		this.frm.month = moment().format('MM')
-	},
-	data() {
-		return {
-			period: this.$route.params.period,
+this.frm.year = moment().format("YYYY")
+this.frm.month = moment().format("MM")
+},
+data() {
+return {
+period: this.$route.params.period,
 
-			filterOptions: {
-				shortcuts: [
-					{
-						text: '최근1주',
-						onClick: (picker) => {
-							const start = this.getToday().subtract(6, 'day')
-							const end = this.getToday()
+filterOptions: {
+shortcuts: [
+{
+text: "최근1주",
+onClick: (picker) => {
+const start = this.getToday().subtract(6, "day")
+const end = this.getToday()
 
-							picker.$emit('pick', [start, end])
-						},
-					},
-					{
-						text: '이번달',
-						onClick: (picker) => {
-							const start = this.getToday().startOf('month')
-							const end = this.getToday()
+picker.$emit("pick", [start, end])
+},
+},
+{
+text: "이번달",
+onClick: (picker) => {
+const start = this.getToday().startOf("month")
+const end = this.getToday()
 
-							picker.$emit('pick', [start, end])
-						},
-					},
-					{
-						text: '지난달',
-						onClick: (picker) => {
-							const start = this.getToday().subtract(1, 'month').startOf('month')
-							const end = this.getToday().subtract(1, 'month').endOf('month').startOf('day')
+picker.$emit("pick", [start, end])
+},
+},
+{
+text: "지난달",
+onClick: (picker) => {
+const start = this.getToday().subtract(1, "month").startOf("month")
+const end = this.getToday().subtract(1, "month").endOf("month").startOf("day")
 
-							picker.$emit('pick', [start, end])
-						},
-					},
-				],
-			},
+picker.$emit("pick", [start, end])
+},
+},
+],
+},
 
-			frmSearch: {
-				searchDateRange: [null, null],
-			},
-			// 상단 텍스트
-			tab: {
-				category: '',
-				firstFilter: '',
-				secondFilter: '',
-				thirdFilter: '',
-			},
+frmSearch: {
+searchDateRange: [null, null],
+},
+// 상단 텍스트
+tab: {
+category: "",
+firstFilter: "",
+secondFilter: "",
+thirdFilter: "",
+},
 
-			frm: {
-				month: '',
-				year: '',
-				count: 7,
-			},
+frm: {
+month: "",
+year: "",
+count: 7,
+},
 
-			till: {
-				month: '',
-				year: '',
-				count: '',
-				count_gap: '',
-			},
-		}
-	},
+till: {
+month: "",
+year: "",
+count: "",
+count_gap: "",
+},
+}
+},
 }
 </script>
 <style lang="scss" module>

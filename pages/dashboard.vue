@@ -269,35 +269,35 @@
 </template>
 
 <script>
-import moment from 'moment'
+import moment from "moment"
 
 export default {
-	layout: 'authorized',
-	async asyncData({ app }) {
-		const month = moment().format('M')
-		const year = moment().format('YYYY')
+layout: "authorized",
+async asyncData({ app }) {
+const month = moment().format("M")
+const year = moment().format("YYYY")
 
-		const daily = await app.$axios.$get('/stats/daily', {
-			params: {
-				count: 2,
-			},
-		})
+const daily = await app.$axios.$get("/stats/daily", {
+params: {
+count: 2,
+},
+})
 
-		const monthly = await app.$axios.$get('/stats/monthly', {
-			params: {
-				year, month, count: 2,
-			},
-		})
+const monthly = await app.$axios.$get("/stats/monthly", {
+params: {
+year, month, count: 2,
+},
+})
 
-		const today = daily[0]
-		const yesterday = daily[1]
-		const thisMonth = monthly[0]
-		const preMonth = monthly[1]
+const today = daily[0]
+const yesterday = daily[1]
+const thisMonth = monthly[0]
+const preMonth = monthly[1]
 
-		return {
-			today, yesterday, thisMonth, preMonth,
-		}
-	},
+return {
+today, yesterday, thisMonth, preMonth,
+}
+},
 }
 </script>
 

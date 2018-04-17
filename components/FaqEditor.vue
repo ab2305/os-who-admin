@@ -20,61 +20,61 @@
 
 <script>
 export default {
-	layout: 'authorized',
-	props: {
-		form: {
-			type: Object,
-			default: () => ({
-				title: '',
-				body: '',
-			}),
-		},
-		isEdit: {
-			type: Boolean,
-			default: false,
-		},
-	},
-	data() {
-		return {
-			rules: {
-				title: [
-					{ required: true, message: '제목을 입력해주세요.', trigger: 'blur' },
-					{ max: 500, message: '최대 500자까지 입력할 수 있습니다.', trigger: 'blur' },
-				],
-				body: [
-					{ required: true, message: '내용을 입력해주세요.', trigger: 'blur' },
-				],
-			},
-		}
-	},
-	methods: {
-		write() {
-			this.$refs.form.validate(async (isValid) => {
-				if (!isValid) {
-					return
-				}
+layout: "authorized",
+props: {
+form: {
+type: Object,
+default: () => ({
+title: "",
+body: "",
+}),
+},
+isEdit: {
+type: Boolean,
+default: false,
+},
+},
+data() {
+return {
+rules: {
+title: [
+{ required: true, message: "제목을 입력해주세요.", trigger: "blur" },
+{ max: 500, message: "최대 500자까지 입력할 수 있습니다.", trigger: "blur" },
+],
+body: [
+{ required: true, message: "내용을 입력해주세요.", trigger: "blur" },
+],
+},
+}
+},
+methods: {
+write() {
+this.$refs.form.validate(async (isValid) => {
+if (!isValid) {
+return
+}
 
-				try {
-					if (this.isEdit) {
-						await this.$axios.$put(`faqs/${this.$route.params.id}`, this.form)
-					} else {
-						await this.$axios.$post('Faq', this.form)
-					}
+try {
+if (this.isEdit) {
+await this.$axios.$put(`faqs/${this.$route.params.id}`, this.form)
+} else {
+await this.$axios.$post("Faq", this.form)
+}
 
-					this.$router.push('/operation/faqs')
+this.$router.push("/operation/faqs")
 
-					this.$notify.success({
-						title: this.isEdit ? '수정' : '등록',
-						message: this.isEdit ? 'FAQ를 수정했습니다.' : 'FAQ를 등록했습니다.',
-					})
-				} catch (error) {
-					this.$notify.error({
-						title: this.isEdit ? '수정 실패' : '등록 실패',
-						message: `status: ${error.response.status}`,
-					})
-				}
-			})
-		},
-	},
+this.$notify.success({
+title: this.isEdit ? "수정" : "등록",
+message: this.isEdit ? "FAQ를 수정했습니다." : "FAQ를 등록했습니다.",
+})
+} catch (error) {
+this.$notify.error({
+title: this.isEdit ? "수정 실패" : "등록 실패",
+message: `status: ${error.response.status}`,
+})
+}
+})
+},
+},
 }
 </script>

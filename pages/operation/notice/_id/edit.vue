@@ -3,19 +3,19 @@
 </template>
 
 <script>
-import NoticeEditor from '~/components/NoticeEditor'
+import NoticeEditor from "~/components/NoticeEditor"
 
 export default {
-	layout: 'authorized',
-	async asyncData({ app, route }) {
-		const { title, body, isTop } = await app.$axios.$get(`/notices/${route.params.id}`)
+layout: "authorized",
+async asyncData({ app, route }) {
+const { title, body, isTop } = await app.$axios.$get(`/notices/${route.params.id}`)
 
-		return {
-			form: { title, body, isTop },
-		}
-	},
-	components: {
-		myNoticeEditor: NoticeEditor,
-	},
+return {
+form: { title, body, isTop },
+}
+},
+components: {
+myNoticeEditor: NoticeEditor,
+},
 }
 </script>

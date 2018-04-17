@@ -26,41 +26,41 @@
 
 <script>
 export default {
-	layout: 'authorized',
+layout: "authorized",
 
-	async asyncData({ app }) {
-		const list = await app.$axios.$get('/faqs')
+async asyncData({ app }) {
+const list = await app.$axios.$get("/faqs")
 
-		return { list }
-	},
-	data() {
-		return {
-			multipleSelection: [],
-		}
-	},
-	methods: {
-		handleSelectionChange(val) {
-			this.multipleSelection = val
-		},
-		async deleteFaqs() {
-			try {
-				const promises = this.multipleSelection
-					.map(async ({ id }) => this.$axios.$delete(`/faqs/${id}`))
+return { list }
+},
+data() {
+return {
+multipleSelection: [],
+}
+},
+methods: {
+handleSelectionChange(val) {
+this.multipleSelection = val
+},
+async deleteFaqs() {
+try {
+const promises = this.multipleSelection
+.map(async ({ id }) => this.$axios.$delete(`/faqs/${id}`))
 
-				await Promise.all(promises)
+await Promise.all(promises)
 
-				this.$notify({
-					message: 'FAQ를 삭제했습니다.',
-				})
+this.$notify({
+message: "FAQ를 삭제했습니다.",
+})
 
-				this.$router.replace('/reload')
-			} catch (error) {
-				this.$notify({
-					type: 'error',
-					message: error,
-				})
-			}
-		},
-	},
+this.$router.replace("/reload")
+} catch (error) {
+this.$notify({
+type: "error",
+message: error,
+})
+}
+},
+},
 }
 </script>

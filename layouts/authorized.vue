@@ -11,12 +11,12 @@
 </template>
 
 <script>
-import Nav from '~/components/Nav'
+import Nav from "~/components/Nav"
 
 export default {
-	middleware: ['authenticated', 'authorized'],
-	components: {
-		myNav: Nav,
-	},
+middleware: ["authenticated", "authorized"],
+components: {
+myNav: Nav,
+},
 }
 </script>

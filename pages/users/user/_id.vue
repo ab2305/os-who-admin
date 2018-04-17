@@ -243,143 +243,143 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import _ from "lodash"
 
 export default {
-	layout: 'authorized',
-	validate: ({
-		params,
-	}) => /^\d+$/.test(params.id),
+layout: "authorized",
+validate: ({
+params,
+}) => /^\d+$/.test(params.id),
 
-	async asyncData({
-		app, params,
-	}) {
-		const info = await app.$axios.$get(`/users/${params.id}`)
-		const usinghistories = await app.$axios.$get('/user/usinghistories/')
+async asyncData({
+app, params,
+}) {
+const info = await app.$axios.$get(`/users/${params.id}`)
+const usinghistories = await app.$axios.$get("/user/usinghistories/")
 
-		const filteredUsinghistories = _.slice(_.cloneDeep(usinghistories), 0, 10)
-		info.filteredbillingHistories = _.slice(_.cloneDeep(info.billingHistories), 0, 10)
+const filteredUsinghistories = _.slice(_.cloneDeep(usinghistories), 0, 10)
+info.filteredbillingHistories = _.slice(_.cloneDeep(info.billingHistories), 0, 10)
 
-		const memoForm = {
-			memo: _.get(info.userInformation, 'memo', ''),
-		}
-		const statusForm = {
-			status: _.get(info.userInformation, 'status', ''),
-		}
+const memoForm = {
+memo: _.get(info.userInformation, "memo", ""),
+}
+const statusForm = {
+status: _.get(info.userInformation, "status", ""),
+}
 
-		/* eslint object-curly-newline: ["error", "always"] */
-		/* eslint-env es6 */
+/* eslint object-curly-newline: ["error", "always"] */
+/* eslint-env es6 */
 
-		return {
-			info, usinghistories, memoForm, statusForm, filteredUsinghistories,
-		}
-	},
-	data() {
-		return {
-			itemForm: {
-				stamp: 0,
-				type: 'add',
-			},
-			subscriptionForm: {
-				period: [],
-			},
-			dialogItemVisible: false,
-			dialogDateVisible: false,
-			dialogStampVisible: false,
-			dialogBillingVisible: false,
-		}
-	},
-	computed: {
-		subscriptionMonths() {
-			return Math.round(this.$moment(this.info.item.subscriptionEndedAt).diff(this.$moment(this.info.item.subscriptionStartedAt), 'months', true))
-		},
-	},
-	methods: {
-		item() {
-			this.$refs.itemForm.validate(async (isValid) => {
-				if (!isValid) {
-					return
-				}
-				try {
-					await this.$axios.$put(`/users/${this.$route.params.id}/item`, this.itemForm)
+return {
+info, usinghistories, memoForm, statusForm, filteredUsinghistories,
+}
+},
+data() {
+return {
+itemForm: {
+stamp: 0,
+type: "add",
+},
+subscriptionForm: {
+period: [],
+},
+dialogItemVisible: false,
+dialogDateVisible: false,
+dialogStampVisible: false,
+dialogBillingVisible: false,
+}
+},
+computed: {
+subscriptionMonths() {
+return Math.round(this.$moment(this.info.item.subscriptionEndedAt).diff(this.$moment(this.info.item.subscriptionStartedAt), "months", true))
+},
+},
+methods: {
+item() {
+this.$refs.itemForm.validate(async (isValid) => {
+if (!isValid) {
+return
+}
+try {
+await this.$axios.$put(`/users/${this.$route.params.id}/item`, this.itemForm)
 
-					this.$router.replace('/reload')
-				} catch (error) {
-					this.$notify({
-						type: 'error',
-						message: error,
-					})
-				}
-			})
-		},
-		subscription() {
-			this.$refs.subscriptionForm.validate(async (isValid) => {
-				if (!isValid) {
-					return
-				}
-				try {
-					const cloned = _.cloneDeep(this.subscriptionForm)
+this.$router.replace("/reload")
+} catch (error) {
+this.$notify({
+type: "error",
+message: error,
+})
+}
+})
+},
+subscription() {
+this.$refs.subscriptionForm.validate(async (isValid) => {
+if (!isValid) {
+return
+}
+try {
+const cloned = _.cloneDeep(this.subscriptionForm)
 
-					/* eslint-disable prefer-destructuring */
-					cloned.subscriptionStartedAt = cloned.period[0]
-					cloned.subscriptionEndedAt = cloned.period[1]
-					/* eslint-enable prefer-destructuring */
-					delete cloned.period
+/* eslint-disable prefer-destructuring */
+cloned.subscriptionStartedAt = cloned.period[0]
+cloned.subscriptionEndedAt = cloned.period[1]
+/* eslint-enable prefer-destructuring */
+delete cloned.period
 
-					await this.$axios.$put(`/users/${this.$route.params.id}/item`, cloned)
+await this.$axios.$put(`/users/${this.$route.params.id}/item`, cloned)
 
-					this.$router.replace('/reload')
-				} catch (error) {
-					this.$notify({
-						type: 'error',
-						message: error,
-					})
-				}
-			})
-		},
-		status() {
-			this.$refs.statusForm.validate(async (isValid) => {
-				if (!isValid) {
-					return
-				}
-				try {
-					await this.$axios.$put(`/users/${this.$route.params.id}/status`, this.statusForm)
+this.$router.replace("/reload")
+} catch (error) {
+this.$notify({
+type: "error",
+message: error,
+})
+}
+})
+},
+status() {
+this.$refs.statusForm.validate(async (isValid) => {
+if (!isValid) {
+return
+}
+try {
+await this.$axios.$put(`/users/${this.$route.params.id}/status`, this.statusForm)
 
-					this.$router.push(`/user/${this.$route.params.id}`)
+this.$router.push(`/user/${this.$route.params.id}`)
 
-					this.$notify.success({
-						message: '등급이 수정되었습니다',
-					})
-				} catch (error) {
-					this.$notify({
-						type: 'error',
-						message: error,
-					})
-				}
-			})
-		},
-		memo() {
-			this.$refs.memoForm.validate(async (isValid) => {
-				if (!isValid) {
-					return
-				}
-				try {
-					await this.$axios.$put(`/users/${this.$route.params.id}/memo`, this.memoForm)
+this.$notify.success({
+message: "등급이 수정되었습니다",
+})
+} catch (error) {
+this.$notify({
+type: "error",
+message: error,
+})
+}
+})
+},
+memo() {
+this.$refs.memoForm.validate(async (isValid) => {
+if (!isValid) {
+return
+}
+try {
+await this.$axios.$put(`/users/${this.$route.params.id}/memo`, this.memoForm)
 
-					this.$router.push(`/user/${this.$route.params.id}`)
+this.$router.push(`/user/${this.$route.params.id}`)
 
-					this.$notify.success({
-						message: '메모가 수정되었습니다',
-					})
-				} catch (error) {
-					this.$notify({
-						type: 'error',
-						message: error,
-					})
-				}
-			})
-		},
-	},
+this.$notify.success({
+message: "메모가 수정되었습니다",
+})
+} catch (error) {
+this.$notify({
+type: "error",
+message: error,
+})
+}
+})
+},
+},
 }
 </script>
 

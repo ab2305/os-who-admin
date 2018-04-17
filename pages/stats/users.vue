@@ -127,119 +127,119 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import moment from 'moment'
-import csvStringify from 'csv-stringify'
-import FileSaver from 'file-saver'
-import ElOption from '../../node_modules/element-ui/packages/select/src/option.vue'
-import ElFormItem from '../../node_modules/element-ui/packages/form/src/form-item.vue'
+import _ from "lodash"
+import moment from "moment"
+import csvStringify from "csv-stringify"
+import FileSaver from "file-saver"
+import ElOption from "../../node_modules/element-ui/packages/select/src/option.vue"
+import ElFormItem from "../../node_modules/element-ui/packages/form/src/form-item.vue"
 
 export default {
-	components: {
-		ElFormItem,
-		ElOption,
-	},
-	layout: 'authorized',
-	async asyncData({
-		app,
-	}) {
-		const userList = await app.$axios.$get('/stats/users', {
-			params: {
-				year: moment().format('YYYY'),
-				month: moment().format('MM'),
-			},
-		})
+components: {
+ElFormItem,
+ElOption,
+},
+layout: "authorized",
+async asyncData({
+app,
+}) {
+const userList = await app.$axios.$get("/stats/users", {
+params: {
+year: moment().format("YYYY"),
+month: moment().format("MM"),
+},
+})
 
-		return {
-			userList,
-		}
-	},
-	methods: {
-		getToday() {
-			return this.$moment().startOf('day')
-		},
+return {
+userList,
+}
+},
+methods: {
+getToday() {
+return this.$moment().startOf("day")
+},
 
-		getSummaries(param) {
-			const {
-				columns,
-				data,
-			} = param
-			const sums = []
-			columns.forEach((column, index) => {
-				if (index === 0) {
-					sums[index] = '합계'
-					return
-				}
-				const values = data.map(item => Number(item[column.property]))
-				if (!values.every(value => _.isNaN(value))) {
-					sums[index] = `${values.reduce((prev, curr) => {
-						const value = Number(curr)
-						if (!_.isNaN(value)) {
-							return prev + curr
-						}
-						return prev
-					}, 0)}`
-				} else {
-					sums[index] = ''
-				}
-			})
+getSummaries(param) {
+const {
+columns,
+data,
+} = param
+const sums = []
+columns.forEach((column, index) => {
+if (index === 0) {
+sums[index] = "합계"
+return
+}
+const values = data.map(item => Number(item[column.property]))
+if (!values.every(value => _.isNaN(value))) {
+sums[index] = `${values.reduce((prev, curr) => {
+const value = Number(curr)
+if (!_.isNaN(value)) {
+return prev + curr
+}
+return prev
+}, 0)}`
+} else {
+sums[index] = ""
+}
+})
 
-			return sums
-		},
+return sums
+},
 
-		getRank(obj) {
-			return (this.userList.indexOf(obj) + 1)
-		},
+getRank(obj) {
+return (this.userList.indexOf(obj) + 1)
+},
 
-		async download(isAll = true) {
-			const startDate = moment('2017-09')
-			const nowDate = moment()
+async download(isAll = true) {
+const startDate = moment("2017-09")
+const nowDate = moment()
 
-			const allList = await this.$axios.$get('/stats/users', {
-				params: {
-					year: startDate.year(),
-					month: startDate.month() + 1,
-					count: nowDate.diff(startDate, 'months') + 1,
-				},
-			})
+const allList = await this.$axios.$get("/stats/users", {
+params: {
+year: startDate.year(),
+month: startDate.month() + 1,
+count: nowDate.diff(startDate, "months") + 1,
+},
+})
 
-			const list = isAll ? allList : this.userList
+const list = isAll ? allList : this.userList
 
-			const formatted = [['순위', '이름', '아이디', '우표 결제건수', '이용권 결제건수', '계', '우표 결제금액', '이용권 결제금액', '계', '환불 건수', '환불 금액']]
+const formatted = [["순위", "이름", "아이디", "우표 결제건수", "이용권 결제건수", "계", "우표 결제금액", "이용권 결제금액", "계", "환불 건수", "환불 금액"]]
 
-			formatted.push(...list.map(data => [
-				data.id,
-				data.name,
-				data.email,
-				data.stampCount,
-				data.subscriptionCount,
-				data.allBillingCount,
-				data.stampSales,
-				data.subscriptionSales,
-				data.allSales,
-				data.refundCount,
-				data.refundSales,
-			]))
+formatted.push(...list.map(data => [
+data.id,
+data.name,
+data.email,
+data.stampCount,
+data.subscriptionCount,
+data.allBillingCount,
+data.stampSales,
+data.subscriptionSales,
+data.allSales,
+data.refundCount,
+data.refundSales,
+]))
 
-			const download = (error, output) => {
-				const blob = new Blob(
-					[output],
-					{ type: 'text/plain; charset=utf-8' },
-				)
+const download = (error, output) => {
+const blob = new Blob(
+[output],
+{ type: "text/plain; charset=utf-8" },
+)
 
-				FileSaver.saveAs(
-					blob,
-					`userstatics ${isAll ? 'all' : 'filtered'} ${this.$moment().format('lll')}.csv`,
-				)
-			}
+FileSaver.saveAs(
+blob,
+`userstatics ${isAll ? "all" : "filtered"} ${this.$moment().format("lll")}.csv`,
+)
+}
 
-			csvStringify(formatted, download)
-		},
+csvStringify(formatted, download)
+},
 
-		// not used loadUserAllData() -> use this.allList
-		// loadUserAllData() has error to download
+// not used loadUserAllData() -> use this.allList
+// loadUserAllData() has error to download
 
-		/*    async loadUserAllData() {
+/*    async loadUserAllData() {
       const standardDate = moment(['2017', '07'])
       const nowDate = moment()
 
@@ -256,108 +256,108 @@ export default {
         .then(list => list)
     }, */
 
-		// this method is button to period inquiry
-		periodInquiry(params) {
-			const m = moment()
-			const year = m.format('YYYY')
-			const month = m.format('MM')
+// this method is button to period inquiry
+periodInquiry(params) {
+const m = moment()
+const year = m.format("YYYY")
+const month = m.format("MM")
 
-			switch (params) {
-			case 1:
-				this.frm.year = year
-				this.frm.month = month
-				break
-			case 2:
-				this.frm.year = year
-				this.frm.month = String(Number(month) - 1)
-				this.count = 2
-				break
-			case 3:
-				this.frm.year = year
-				this.frm.month = String(Number(month))
-				this.count = 4
-				break
-			case 4:
-				this.frm.year = year
-				this.frm.month = String(Number(month))
-				this.count = 7
-				break
-			case 5:
-				this.frm.year = year
-				this.frm.month = Number(month)
-				this.count = Number(month) + 1
-				break
-			default:
-				break
-			}
+switch (params) {
+case 1:
+this.frm.year = year
+this.frm.month = month
+break
+case 2:
+this.frm.year = year
+this.frm.month = String(Number(month) - 1)
+this.count = 2
+break
+case 3:
+this.frm.year = year
+this.frm.month = String(Number(month))
+this.count = 4
+break
+case 4:
+this.frm.year = year
+this.frm.month = String(Number(month))
+this.count = 7
+break
+case 5:
+this.frm.year = year
+this.frm.month = Number(month)
+this.count = Number(month) + 1
+break
+default:
+break
+}
 
-			this.getAxiosUserData()
-		},
+this.getAxiosUserData()
+},
 
-		// this method is keyword & selected period inquiry
-		inquiry() {
-			const filter = this.searchForm.category && this.searchForm.query
-			const period = (this.frm.year && this.frm.month && this.till.year && this.till.month)
+// this method is keyword & selected period inquiry
+inquiry() {
+const filter = this.searchForm.category && this.searchForm.query
+const period = (this.frm.year && this.frm.month && this.till.year && this.till.month)
 
-			if (period) {
-				this.frm.year = moment(this.frm.year).format('YYYY')
-				this.frm.month = moment(this.frm.month).format('MM')
+if (period) {
+this.frm.year = moment(this.frm.year).format("YYYY")
+this.frm.month = moment(this.frm.month).format("MM")
 
-				this.till.year = moment(this.till.year).format('YYYY')
-				this.till.month = moment(this.till.month).format('MM')
+this.till.year = moment(this.till.year).format("YYYY")
+this.till.month = moment(this.till.month).format("MM")
 
-				const till = moment([this.till.year, this.till.month])
-				const frm = moment([this.frm.year, this.frm.month])
+const till = moment([this.till.year, this.till.month])
+const frm = moment([this.frm.year, this.frm.month])
 
-				this.count = till.diff(frm, 'months') + 2
-			}
+this.count = till.diff(frm, "months") + 2
+}
 
-			this.getAxiosUserData(filter, period)
-		},
+this.getAxiosUserData(filter, period)
+},
 
-		getAxiosUserData(filter = false, period = false) {
-			// case by case (period or keyword)
-			const params = {}
+getAxiosUserData(filter = false, period = false) {
+// case by case (period or keyword)
+const params = {}
 
-			params.count = this.count
-			if (filter) {
-				const param = this.searchForm.category
-				params[param] = this.searchForm.query
-			} else if (period) {
-				params.year = this.till.year
-				params.month = this.till.month
-			} else {
-				params.year = this.frm.year
-				params.month = this.frm.month
-			}
+params.count = this.count
+if (filter) {
+const param = this.searchForm.category
+params[param] = this.searchForm.query
+} else if (period) {
+params.year = this.till.year
+params.month = this.till.month
+} else {
+params.year = this.frm.year
+params.month = this.frm.month
+}
 
-			this.$axios.$get('/stats/users', {
-				params,
-			}).catch(error => Promise.reject(error))
-				.then((res) => {
-					this.userList = res
-				})
-		},
-	},
+this.$axios.$get("/stats/users", {
+params,
+}).catch(error => Promise.reject(error))
+.then((res) => {
+this.userList = res
+})
+},
+},
 
-	data() {
-		return {
-			nowList: {},
-			count: 2,
-			searchForm: {
-				category: null,
-				query: '',
-			},
-			frm: {
-				year: null,
-				month: null,
-			},
-			till: {
-				year: null,
-				month: null,
-			},
-		}
-	},
+data() {
+return {
+nowList: {},
+count: 2,
+searchForm: {
+category: null,
+query: "",
+},
+frm: {
+year: null,
+month: null,
+},
+till: {
+year: null,
+month: null,
+},
+}
+},
 }
 </script>
 <style lang="scss" module>

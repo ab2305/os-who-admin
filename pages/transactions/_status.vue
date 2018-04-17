@@ -191,252 +191,252 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import moment from 'moment'
-import csvStringify from 'csv-stringify'
-import FileSaver from 'file-saver'
+import _ from "lodash"
+import moment from "moment"
+import csvStringify from "csv-stringify"
+import FileSaver from "file-saver"
 
 export default {
-	layout: 'authorized',
-	validate: ({ params }) => /^(:?payments|refunds)$/.test(params.status),
+layout: "authorized",
+validate: ({ params }) => /^(:?payments|refunds)$/.test(params.status),
 
-	async asyncData({
-		app, route,
-	}) {
-		const params = {}
-		if (route.params.status === 'refunds') {
-			params.refunded = true
-		}
-		const transactionlist = await app.$axios.$get('/billingHistories', {
-			params: _.assign(params, {
-				limit: 10,
-				page: 1,
-			}),
-		})
+async asyncData({
+app, route,
+}) {
+const params = {}
+if (route.params.status === "refunds") {
+params.refunded = true
+}
+const transactionlist = await app.$axios.$get("/billingHistories", {
+params: _.assign(params, {
+limit: 10,
+page: 1,
+}),
+})
 
-		const transactionCount = await app.$axios.$get('/billingHistories', {
-			params: _.assign(params, {
-				length: true,
-			}),
-		})
+const transactionCount = await app.$axios.$get("/billingHistories", {
+params: _.assign(params, {
+length: true,
+}),
+})
 
-		const memoForm = {
-			memo: _.get(transactionlist, 'memo', ''),
-		}
+const memoForm = {
+memo: _.get(transactionlist, "memo", ""),
+}
 
-		const refundMemoForm = {
-			refundMemo: _.get(transactionlist, 'refundMemo', ''),
-		}
+const refundMemoForm = {
+refundMemo: _.get(transactionlist, "refundMemo", ""),
+}
 
-		return {
-			transactionCount, transactionlist, memoForm, refundMemoForm,
-		}
-	},
+return {
+transactionCount, transactionlist, memoForm, refundMemoForm,
+}
+},
 
-	data() {
-		return {
-			disabled: true,
-			form: {
-				selectedItem: '',
-				stamp: '전체',
-				subscription: '전체',
-				query: '',
-				category: 'name',
-				fromDate: '',
-				toDate: '',
-				dateValue: [],
-			},
-			selection: [],
-			refunded: true,
-			memoForm: '',
-			refundMemoForm: '',
-			status: this.$route.params.status,
-			visible: false,
-			selectedTransaction: '',
-			currentPage: 1,
-		}
-	},
+data() {
+return {
+disabled: true,
+form: {
+selectedItem: "",
+stamp: "전체",
+subscription: "전체",
+query: "",
+category: "name",
+fromDate: "",
+toDate: "",
+dateValue: [],
+},
+selection: [],
+refunded: true,
+memoForm: "",
+refundMemoForm: "",
+status: this.$route.params.status,
+visible: false,
+selectedTransaction: "",
+currentPage: 1,
+}
+},
 
-	methods: {
-		async filter() {
-			const params = {}
-			const {
-				stamp, subscription, query, category, toDate, fromDate, dateValue,
-			} = this.form
-			if (this.status === 'refunds') {
-				params.refunded = true
-			}
-			if (!_.isEmpty(_.compact(dateValue))) {
-				/* eslint-enable prefer-destructuring */
-				params.from = moment(dateValue[0]).format('YYYY-MM-DD')
-				params.to = moment(dateValue[1]).format('YYYY-MM-DD')
-				/* eslint-enable prefer-destructuring */
-			}
-			if (!_.isEmpty(query) && category === 'name') {
-				params.name = query
-			}
-			if (!_.isEmpty(query) && category === 'email') {
-				params.email = query
-			}
-			if (!_.isEmpty(query) && category === 'phone') {
-				params.phone = query
-			}
-			if (stamp !== '전체') {
-				params.product = stamp
-			}
-			if (subscription !== '전체') {
-				params.product = subscription
-			}
-			if (!_.isEmpty(toDate) && !_.isEmpty(fromDate) && _.isEmpty(_.compact(dateValue))) {
-				params.from = fromDate
-				params.to = toDate
-			}
+methods: {
+async filter() {
+const params = {}
+const {
+stamp, subscription, query, category, toDate, fromDate, dateValue,
+} = this.form
+if (this.status === "refunds") {
+params.refunded = true
+}
+if (!_.isEmpty(_.compact(dateValue))) {
+/* eslint-enable prefer-destructuring */
+params.from = moment(dateValue[0]).format("YYYY-MM-DD")
+params.to = moment(dateValue[1]).format("YYYY-MM-DD")
+/* eslint-enable prefer-destructuring */
+}
+if (!_.isEmpty(query) && category === "name") {
+params.name = query
+}
+if (!_.isEmpty(query) && category === "email") {
+params.email = query
+}
+if (!_.isEmpty(query) && category === "phone") {
+params.phone = query
+}
+if (stamp !== "전체") {
+params.product = stamp
+}
+if (subscription !== "전체") {
+params.product = subscription
+}
+if (!_.isEmpty(toDate) && !_.isEmpty(fromDate) && _.isEmpty(_.compact(dateValue))) {
+params.from = fromDate
+params.to = toDate
+}
 
-			this.currentPage = 1
+this.currentPage = 1
 
-			params.limit = 10
-			params.page = this.currentPage
+params.limit = 10
+params.page = this.currentPage
 
-			const filteredList = await this.$axios.$get('/billingHistories', {
-				params,
-			})
+const filteredList = await this.$axios.$get("/billingHistories", {
+params,
+})
 
-			const filteredCount = await this.$axios.$get('/billingHistories', {
-				params: _.omit(params, ['limit', 'page']),
-			})
+const filteredCount = await this.$axios.$get("/billingHistories", {
+params: _.omit(params, ["limit", "page"]),
+})
 
-			this.transactionlist = filteredList
-			this.transactionCount.length = filteredCount.length
-		},
-		async download(isAll = true) {
-			const selected = this.selection[0]
-			const select = _.filter(this.transactionlist, o => o.id === selected)
+this.transactionlist = filteredList
+this.transactionCount.length = filteredCount.length
+},
+async download(isAll = true) {
+const selected = this.selection[0]
+const select = _.filter(this.transactionlist, o => o.id === selected)
 
-			const list = isAll ? this.transactionlist : select
-			const formatted = [['No', '구매번호', '이름', '아이디', '휴대폰', '결제일시', '구매아이템', '금액', '구매횟수', '환불내역']]
+const list = isAll ? this.transactionlist : select
+const formatted = [["No", "구매번호", "이름", "아이디", "휴대폰", "결제일시", "구매아이템", "금액", "구매횟수", "환불내역"]]
 
-			formatted.push(...list.map(data => [
-				data.id,
-				data.orderId,
-				data.user.name,
-				data.user.email,
-				data.user.phone,
-				data.createdAt,
-				data.productName,
-				data.price,
-				data.billingCount,
-				data.refundedAt,
-			]))
+formatted.push(...list.map(data => [
+data.id,
+data.orderId,
+data.user.name,
+data.user.email,
+data.user.phone,
+data.createdAt,
+data.productName,
+data.price,
+data.billingCount,
+data.refundedAt,
+]))
 
-			const download = (error, output) => {
-				const blob = new Blob(
-					[output],
-					{ type: 'text/plain;charset=utf-8' },
-				)
+const download = (error, output) => {
+const blob = new Blob(
+[output],
+{ type: "text/plain;charset=utf-8" },
+)
 
-				FileSaver.saveAs(
-					blob,
-					`billingHistories ${isAll ? 'selected' : 'filtered'} ${this.$moment().format('lll')}.csv`,
-				)
-			}
+FileSaver.saveAs(
+blob,
+`billingHistories ${isAll ? "selected" : "filtered"} ${this.$moment().format("lll")}.csv`,
+)
+}
 
-			csvStringify(formatted, download)
-		},
-		periodButton(params) {
-			const today = moment().format('YYYY-MM-DD')
+csvStringify(formatted, download)
+},
+periodButton(params) {
+const today = moment().format("YYYY-MM-DD")
 
-			switch (params) {
-			case 1:
-				this.form.fromDate = moment().add(-1, 'days').format('YYYY-MM-DD')
-				this.form.toDate = today
-				break
-			case 2:
-				this.form.fromDate = moment().add(-2, 'days').format('YYYY-MM-DD')
-				this.form.toDate = today
-				break
-			case 3:
-				this.form.fromDate = moment().add(-8, 'days').format('YYYY-MM-DD')
-				this.form.toDate = today
-				break
-			case 4:
-				this.form.fromDate = moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD')
-				this.form.toDate = moment().startOf('month').format('YYYY-MM-DD')
-				break
-			case 5:
-				this.form.fromDate = moment().subtract(2, 'months').startOf('month').format('YYYY-MM-DD')
-				this.form.toDate = moment().subtract(1, 'months').startOf('month').format('YYYY-MM-DD')
-				break
-			default:
-				this.form.fromDate = undefined
-				this.form.toDate = undefined
-				break
-			}
-		},
-		async handleCurrentChange() {
-			const params = {}
-			if (this.status === 'refunds') {
-				params.refunded = true
-			}
-			const changeTransactionlist = await this.$axios.$get('/billingHistories', {
-				params: _.assign(params, {
-					limit: 10,
-					page: this.currentPage,
-				}),
-			})
-			this.transactionlist = changeTransactionlist
-			return this.currentPage
-		},
+switch (params) {
+case 1:
+this.form.fromDate = moment().add(-1, "days").format("YYYY-MM-DD")
+this.form.toDate = today
+break
+case 2:
+this.form.fromDate = moment().add(-2, "days").format("YYYY-MM-DD")
+this.form.toDate = today
+break
+case 3:
+this.form.fromDate = moment().add(-8, "days").format("YYYY-MM-DD")
+this.form.toDate = today
+break
+case 4:
+this.form.fromDate = moment().subtract(1, "months").startOf("month").format("YYYY-MM-DD")
+this.form.toDate = moment().startOf("month").format("YYYY-MM-DD")
+break
+case 5:
+this.form.fromDate = moment().subtract(2, "months").startOf("month").format("YYYY-MM-DD")
+this.form.toDate = moment().subtract(1, "months").startOf("month").format("YYYY-MM-DD")
+break
+default:
+this.form.fromDate = undefined
+this.form.toDate = undefined
+break
+}
+},
+async handleCurrentChange() {
+const params = {}
+if (this.status === "refunds") {
+params.refunded = true
+}
+const changeTransactionlist = await this.$axios.$get("/billingHistories", {
+params: _.assign(params, {
+limit: 10,
+page: this.currentPage,
+}),
+})
+this.transactionlist = changeTransactionlist
+return this.currentPage
+},
 
-		confirm(selectedTransaction) {
-			this.visible = true
-			this.selectedTransaction = selectedTransaction
-		},
+confirm(selectedTransaction) {
+this.visible = true
+this.selectedTransaction = selectedTransaction
+},
 
-		async refund(transaction) {
-			try {
-				this.refunded = { refunded: true }
-				await this.$axios.$put(`/billingHistories/${transaction.id}`, this.refunded)
-				this.$router.replace('/reload')
-			} catch (error) {
-				this.$notify({
-					type: 'error',
-					message: error,
-				})
-			}
-		},
+async refund(transaction) {
+try {
+this.refunded = { refunded: true }
+await this.$axios.$put(`/billingHistories/${transaction.id}`, this.refunded)
+this.$router.replace("/reload")
+} catch (error) {
+this.$notify({
+type: "error",
+message: error,
+})
+}
+},
 
-		async memo(transaction) {
-			try {
-				this.memoForm = { memo: transaction.memo }
-				this.refundMemoForm = { refundMemo: transaction.refundMemo }
-				if (transaction.refunded === false) { await this.$axios.$put(`/billingHistories/${transaction.id}`, this.memoForm) } else { await this.$axios.$put(`/billingHistories/${transaction.id}`, this.refundMemoForm) }
-				this.$notify.success({
-					message: '메모가 수정되었습니다.',
-				})
-				// this.$router.replace('/reload')
-			} catch (error) {
-				this.$notify({
-					type: 'error',
-					message: error,
-				})
-			}
-		},
+async memo(transaction) {
+try {
+this.memoForm = { memo: transaction.memo }
+this.refundMemoForm = { refundMemo: transaction.refundMemo }
+if (transaction.refunded === false) { await this.$axios.$put(`/billingHistories/${transaction.id}`, this.memoForm) } else { await this.$axios.$put(`/billingHistories/${transaction.id}`, this.refundMemoForm) }
+this.$notify.success({
+message: "메모가 수정되었습니다.",
+})
+// this.$router.replace('/reload')
+} catch (error) {
+this.$notify({
+type: "error",
+message: error,
+})
+}
+},
 
-		async deleteTransaction(id) {
-			try {
-				await this.$axios.$delete(`/billingHistories/${id}`)
-				this.$notify.success({
-					message: '선택한 구매건이 삭제되었습니다.',
-				})
-				this.$router.replace('/reload')
-			} catch (error) {
-				this.$notify({
-					type: 'error',
-					message: error,
-				})
-			}
-		},
-	},
+async deleteTransaction(id) {
+try {
+await this.$axios.$delete(`/billingHistories/${id}`)
+this.$notify.success({
+message: "선택한 구매건이 삭제되었습니다.",
+})
+this.$router.replace("/reload")
+} catch (error) {
+this.$notify({
+type: "error",
+message: error,
+})
+}
+},
+},
 }
 </script>
 

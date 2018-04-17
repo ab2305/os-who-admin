@@ -25,16 +25,16 @@
 
 <script>
 export default {
-	layout: 'authorized',
+layout: "authorized",
 
-	async asyncData({ app }) {
-		const list = await app.$axios.$get('/questions')
-		return { list: [...list] }
-	},
-	methods: {
-		handleSelectionChange(val) {
-			this.multipleSelection = val
-		},
-	},
+async asyncData({ app }) {
+const list = await app.$axios.$get("/questions")
+return { list: [...list] }
+},
+methods: {
+handleSelectionChange(val) {
+this.multipleSelection = val
+},
+},
 }
 </script>

@@ -3,21 +3,21 @@
 </template>
 
 <script>
-import PrivacyEditor from '~/components/PrivacyEditor'
+import PrivacyEditor from "~/components/PrivacyEditor"
 
 export default {
-	layout: 'authorized',
-	async asyncData({ app, route }) {
-		const { title, body } = await app.$axios.$get(`/other-notices/${route.params.id}`, {
-			params: { category: 'privacy' },
-		})
+layout: "authorized",
+async asyncData({ app, route }) {
+const { title, body } = await app.$axios.$get(`/other-notices/${route.params.id}`, {
+params: { category: "privacy" },
+})
 
-		return {
-			form: { title, body },
-		}
-	},
-	components: {
-		myPrivacyEditor: PrivacyEditor,
-	},
+return {
+form: { title, body },
+}
+},
+components: {
+myPrivacyEditor: PrivacyEditor,
+},
 }
 </script>

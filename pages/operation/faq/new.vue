@@ -20,48 +20,48 @@
 
 <script>
 export default {
-	layout: 'authorized',
-	data() {
-		return {
-			form: {
-				title: '',
-				body: '',
-			},
-			rules: {
-				title: [
-					{ required: true, message: '제목을 입력해주세요.', trigger: 'blur' },
-					{ max: 500, message: '최대 500자까지 입력할 수 있습니다.', trigger: 'blur' },
-				],
-				body: [
-					{ required: true, message: '내용을 입력해주세요.', trigger: 'blur' },
-				],
-			},
-		}
-	},
-	methods: {
-		write() {
-			this.$refs.form.validate(async (isValid) => {
-				if (!isValid) {
-					return
-				}
+layout: "authorized",
+data() {
+return {
+form: {
+title: "",
+body: "",
+},
+rules: {
+title: [
+{ required: true, message: "제목을 입력해주세요.", trigger: "blur" },
+{ max: 500, message: "최대 500자까지 입력할 수 있습니다.", trigger: "blur" },
+],
+body: [
+{ required: true, message: "내용을 입력해주세요.", trigger: "blur" },
+],
+},
+}
+},
+methods: {
+write() {
+this.$refs.form.validate(async (isValid) => {
+if (!isValid) {
+return
+}
 
-				try {
-					await this.$axios.$post('faq', this.form)
+try {
+await this.$axios.$post("faq", this.form)
 
-					this.$router.push('/operation/faqs')
+this.$router.push("/operation/faqs")
 
-					this.$notify.success({
-						title: '등록',
-						message: '등록 되었습니다.',
-					})
-				} catch (error) {
-					this.$notify.error({
-						title: '등록 실패',
-						message: `status: ${error.response.status}`,
-					})
-				}
-			})
-		},
-	},
+this.$notify.success({
+title: "등록",
+message: "등록 되었습니다.",
+})
+} catch (error) {
+this.$notify.error({
+title: "등록 실패",
+message: `status: ${error.response.status}`,
+})
+}
+})
+},
+},
 }
 </script>

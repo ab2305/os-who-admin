@@ -18,47 +18,47 @@
 
 <script>
 export default {
-	layout: 'authorized',
-	data() {
-		return {
-			form: {
-				email: '',
-				userId: '',
-			},
-		}
-	},
-	methods: {
-		async querySearchAsync(queryString, cb) {
-			const filteredUserList = await this.$axios.$get(`users?email=${queryString}`)
-			const results = filteredUserList.map(o => ({ value: `${o.name}(${o.email})`, userId: o.id }))
-			cb(results)
-		},
-		handleSelect(item) {
-			this.form.userId = item.userId
-		},
-		write() {
-			this.$refs.form.validate(async (isValid) => {
-				if (!isValid) {
-					return
-				}
-				try {
-					await this.$axios.$post('admin', this.form)
+layout: "authorized",
+data() {
+return {
+form: {
+email: "",
+userId: "",
+},
+}
+},
+methods: {
+async querySearchAsync(queryString, cb) {
+const filteredUserList = await this.$axios.$get(`users?email=${queryString}`)
+const results = filteredUserList.map(o => ({ value: `${o.name}(${o.email})`, userId: o.id }))
+cb(results)
+},
+handleSelect(item) {
+this.form.userId = item.userId
+},
+write() {
+this.$refs.form.validate(async (isValid) => {
+if (!isValid) {
+return
+}
+try {
+await this.$axios.$post("admin", this.form)
 
-					this.$router.push('/operation/admins')
+this.$router.push("/operation/admins")
 
-					this.$notify.success({
-						title: '등록',
-						message: '등록 되었습니다.',
-					})
-				} catch (error) {
-					this.$notify.error({
-						title: '등록 실패',
-						message: `status: ${error.response.status}`,
-					})
-				}
-			})
-		},
-	},
+this.$notify.success({
+title: "등록",
+message: "등록 되었습니다.",
+})
+} catch (error) {
+this.$notify.error({
+title: "등록 실패",
+message: `status: ${error.response.status}`,
+})
+}
+})
+},
+},
 }
 </script>
 

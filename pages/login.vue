@@ -23,50 +23,50 @@
 
 <script>
 export default {
-	layout: 'anonymous',
-	data() {
-		return {
-			form: {
-				email: '',
-				password: '',
-			},
-			rules: {
-				email: [
-					{ required: true, message: '이메일을 입력해주세요.', trigger: 'blur' },
-					{ type: 'email', message: '이메일 형식으로 입력해주세요.', trigger: 'blur' },
-				],
-				password: [
-					{ required: true, message: '비밀번호를 입력해주세요.', trigger: 'blur' },
-				],
-			},
-		}
-	},
-	methods: {
-		login() {
-			this.$refs.form.validate(async (isValid) => {
-				if (!isValid) {
-					return
-				}
+layout: "anonymous",
+data() {
+return {
+form: {
+email: "",
+password: "",
+},
+rules: {
+email: [
+{ required: true, message: "이메일을 입력해주세요.", trigger: "blur" },
+{ type: "email", message: "이메일 형식으로 입력해주세요.", trigger: "blur" },
+],
+password: [
+{ required: true, message: "비밀번호를 입력해주세요.", trigger: "blur" },
+],
+},
+}
+},
+methods: {
+login() {
+this.$refs.form.validate(async (isValid) => {
+if (!isValid) {
+return
+}
 
-				try {
-					await this.$store.dispatch('login', this.form)
+try {
+await this.$store.dispatch("login", this.form)
 
-					this.$router.push('/dashboard')
+this.$router.push("/dashboard")
 
-					this.$notify.success({
-						title: '로그인',
-						message: '로그인 되었습니다.',
-					})
-				} catch (error) {
-					this.$notify.error({
-						title: '로그인 실패',
-						message: `status: ${error.response.status}`,
-					})
+this.$notify.success({
+title: "로그인",
+message: "로그인 되었습니다.",
+})
+} catch (error) {
+this.$notify.error({
+title: "로그인 실패",
+message: `status: ${error.response.status}`,
+})
 
-					// TODO: focus
-				}
-			})
-		},
-	},
+// TODO: focus
+}
+})
+},
+},
 }
 </script>
