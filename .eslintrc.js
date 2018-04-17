@@ -1,24 +1,19 @@
 module.exports = {
     "env": {
-        "browser": true,
-        "commonjs": true,
-        "es6": true
+        "browser": true
     },
-    "extends": "eslint:recommended",
+    "extends": "plugin:vue/recommended",
     "parserOptions": {
         "ecmaFeatures": {
-            "experimentalObjectRestSpread": true,
             "jsx": true
         },
-        "sourceType": "module"
+	"parser":"babel-eslint",
+	"sourceType":"module"
     },
-    "plugins": [
-        "react"
-    ],
     "rules": {
         "indent": [
             "error",
-            4
+            "tab"
         ],
         "linebreak-style": [
             "error",
@@ -30,7 +25,7 @@ module.exports = {
         ],
         "semi": [
             "error",
-            "always"
+            "never"
         ]
     }
-};
+}

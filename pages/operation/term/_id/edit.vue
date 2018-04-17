@@ -6,18 +6,18 @@
 import TermEditor from '~/components/TermEditor'
 
 export default {
-  layout: 'authorized',
-  async asyncData({ app, route }) {
-    const { title, body } = await app.$axios.$get(`/other-notices/${route.params.id}`, {
-      params: { category: 'term' },
-    })
+	layout: 'authorized',
+	async asyncData({ app, route }) {
+		const { title, body } = await app.$axios.$get(`/other-notices/${route.params.id}`, {
+			params: { category: 'term' },
+		})
 
-    return {
-      form: { title, body },
-    }
-  },
-  components: {
-    myTermEditor: TermEditor,
-  },
+		return {
+			form: { title, body },
+		}
+	},
+	components: {
+		myTermEditor: TermEditor,
+	},
 }
 </script>

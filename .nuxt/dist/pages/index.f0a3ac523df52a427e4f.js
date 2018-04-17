@@ -1,0 +1,2 @@
+webpackJsonp([36],{"/TYz":function(a,b,c){"use strict";Object.defineProperty(b,"__esModule",{value:!0});var d=c("LTv5"),e=c("VU/8"),f=e(d.a,null,null,null,null);b["default"]=f.exports},LTv5:function(a,b){"use strict";b.a={asyncData:function(a){var b=a.redirect;b("/login")}}}});
+//# sourceMappingURL=index.f0a3ac523df52a427e4f.js.map

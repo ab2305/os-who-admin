@@ -19,49 +19,49 @@
 
 <script>
 export default {
-  layout: 'authorized',
-  validate: ({
-    params,
-  }) => /^\d+$/.test(params.id),
+	layout: 'authorized',
+	validate: ({
+		params,
+	}) => /^\d+$/.test(params.id),
 
-  async asyncData({
-    app, params,
-  }) {
-    const qna = await app.$axios.$get(`/questions/${params.id}`)
+	async asyncData({
+		app, params,
+	}) {
+		const qna = await app.$axios.$get(`/questions/${params.id}`)
 
-    return { qna }
-  },
-  data() {
-    return {
-      form: {
-        comment: '',
-      },
-    }
-  },
-  methods: {
-    write() {
-      this.$refs.form.validate(async (isValid) => {
-        if (!isValid) {
-          return
-        }
+		return { qna }
+	},
+	data() {
+		return {
+			form: {
+				comment: '',
+			},
+		}
+	},
+	methods: {
+		write() {
+			this.$refs.form.validate(async (isValid) => {
+				if (!isValid) {
+					return
+				}
 
-        try {
-          await this.$axios.$post(`questions/${this.$route.params.id}/comment`, this.form)
+				try {
+					await this.$axios.$post(`questions/${this.$route.params.id}/comment`, this.form)
 
-          this.$router.replace('/reload')
+					this.$router.replace('/reload')
 
-          this.$notify.success({
-            title: '등록',
-            message: '답변이 등록 되었습니다.',
-          })
-        } catch (error) {
-          this.$notify.error({
-            title: '등록 실패',
-            message: `status: ${error.response.status}`,
-          })
-        }
-      })
-    },
-  },
+					this.$notify.success({
+						title: '등록',
+						message: '답변이 등록 되었습니다.',
+					})
+				} catch (error) {
+					this.$notify.error({
+						title: '등록 실패',
+						message: `status: ${error.response.status}`,
+					})
+				}
+			})
+		},
+	},
 }
 </script>

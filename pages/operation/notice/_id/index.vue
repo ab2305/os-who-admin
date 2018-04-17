@@ -6,11 +6,11 @@
 
 <script>
 export default {
-  layout: 'authorized',
-  data() {
-    return {
-      id: this.$route.params.id,
-    }
-  },
+	layout: 'authorized',
+	data() {
+		return {
+			id: this.$route.params.id,
+		}
+	},
 }
 </script>

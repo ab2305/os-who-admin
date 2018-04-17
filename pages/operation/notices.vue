@@ -29,47 +29,47 @@
 
 <script>
 export default {
-  layout: 'authorized',
+	layout: 'authorized',
 
-  async asyncData({ app }) {
-    const toplist = await app.$axios.$get('/notices', {
-      params: {
-        top: true,
-      },
-    })
+	async asyncData({ app }) {
+		const toplist = await app.$axios.$get('/notices', {
+			params: {
+				top: true,
+			},
+		})
 
-    const list = await app.$axios.$get('/notices')
+		const list = await app.$axios.$get('/notices')
 
-    return { list: [...toplist, ...list] }
-  },
-  data() {
-    return {
-      multipleSelection: [],
-    }
-  },
-  methods: {
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-    async deleteNotices() {
-      try {
-        const promises = this.multipleSelection
-          .map(async ({ id }) => this.$axios.$delete(`/notices/${id}`))
+		return { list: [...toplist, ...list] }
+	},
+	data() {
+		return {
+			multipleSelection: [],
+		}
+	},
+	methods: {
+		handleSelectionChange(val) {
+			this.multipleSelection = val
+		},
+		async deleteNotices() {
+			try {
+				const promises = this.multipleSelection
+					.map(async ({ id }) => this.$axios.$delete(`/notices/${id}`))
 
-        await Promise.all(promises)
+				await Promise.all(promises)
 
-        this.$notify({
-          message: '공지사항을 삭제했습니다.',
-        })
+				this.$notify({
+					message: '공지사항을 삭제했습니다.',
+				})
 
-        this.$router.replace('/reload')
-      } catch (error) {
-        this.$notify({
-          type: 'error',
-          message: error,
-        })
-      }
-    },
-  },
+				this.$router.replace('/reload')
+			} catch (error) {
+				this.$notify({
+					type: 'error',
+					message: error,
+				})
+			}
+		},
+	},
 }
 </script>

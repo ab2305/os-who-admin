@@ -26,45 +26,45 @@
 
 <script>
 export default {
-  layout: 'authorized',
+	layout: 'authorized',
 
-  async asyncData({ app }) {
-    const list = await app.$axios.$get('/other-notices', {
-      params: { category: 'privacy' },
-    })
+	async asyncData({ app }) {
+		const list = await app.$axios.$get('/other-notices', {
+			params: { category: 'privacy' },
+		})
 
-    return { list }
-  },
-  data() {
-    return {
-      multipleSelection: [],
-    }
-  },
-  methods: {
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-    async deletePrivacies() {
-      try {
-        const promises = this.multipleSelection
-          .map(async ({ id }) => this.$axios.$delete(`/other-notices/${id}`, {
-            params: { category: 'privacy' },
-          }))
+		return { list }
+	},
+	data() {
+		return {
+			multipleSelection: [],
+		}
+	},
+	methods: {
+		handleSelectionChange(val) {
+			this.multipleSelection = val
+		},
+		async deletePrivacies() {
+			try {
+				const promises = this.multipleSelection
+					.map(async ({ id }) => this.$axios.$delete(`/other-notices/${id}`, {
+						params: { category: 'privacy' },
+					}))
 
-        await Promise.all(promises)
+				await Promise.all(promises)
 
-        this.$notify({
-          message: '개인정보취급방침을 삭제했습니다.',
-        })
+				this.$notify({
+					message: '개인정보취급방침을 삭제했습니다.',
+				})
 
-        this.$router.replace('/reload')
-      } catch (error) {
-        this.$notify({
-          type: 'error',
-          message: error,
-        })
-      }
-    },
-  },
+				this.$router.replace('/reload')
+			} catch (error) {
+				this.$notify({
+					type: 'error',
+					message: error,
+				})
+			}
+		},
+	},
 }
 </script>

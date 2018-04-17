@@ -28,62 +28,62 @@
 
 <script>
 export default {
-  layout: 'authorized',
-  data() {
-    return {
-      form: {
-        name: '',
-        title: '',
-        body: '',
-        isTop: false,
-        userId: '',
-      },
-      rules: {
-        name: [
-          { required: true, message: '회원을 선택해주세요.', trigger: 'blur' },
-        ],
-        title: [
-          { required: true, message: '제목을 입력해주세요.', trigger: 'blur' },
-          { max: 500, message: '최대 500자까지 입력할 수 있습니다.', trigger: 'blur' },
-        ],
-        body: [
-          { required: true, message: '내용을 입력해주세요.', trigger: 'blur' },
-        ],
-      },
-    }
-  },
-  methods: {
-    async querySearchAsync(queryString, cb) {
-      const filteredUserList = await this.$axios.$get(`users?name=${queryString}`)
-      const results = filteredUserList.map(o => ({ value: `${o.name}(${o.email})`, userId: o.id }))
-      cb(results)
-    },
-    handleSelect(item) {
-      this.form.userId = item.userId
-    },
-    write() {
-      this.$refs.form.validate(async (isValid) => {
-        if (!isValid) {
-          return
-        }
+	layout: 'authorized',
+	data() {
+		return {
+			form: {
+				name: '',
+				title: '',
+				body: '',
+				isTop: false,
+				userId: '',
+			},
+			rules: {
+				name: [
+					{ required: true, message: '회원을 선택해주세요.', trigger: 'blur' },
+				],
+				title: [
+					{ required: true, message: '제목을 입력해주세요.', trigger: 'blur' },
+					{ max: 500, message: '최대 500자까지 입력할 수 있습니다.', trigger: 'blur' },
+				],
+				body: [
+					{ required: true, message: '내용을 입력해주세요.', trigger: 'blur' },
+				],
+			},
+		}
+	},
+	methods: {
+		async querySearchAsync(queryString, cb) {
+			const filteredUserList = await this.$axios.$get(`users?name=${queryString}`)
+			const results = filteredUserList.map(o => ({ value: `${o.name}(${o.email})`, userId: o.id }))
+			cb(results)
+		},
+		handleSelect(item) {
+			this.form.userId = item.userId
+		},
+		write() {
+			this.$refs.form.validate(async (isValid) => {
+				if (!isValid) {
+					return
+				}
 
-        try {
-          await this.$axios.$post('note', this.form)
+				try {
+					await this.$axios.$post('note', this.form)
 
-          this.$router.push('/operation/notes')
+					this.$router.push('/operation/notes')
 
-          this.$notify.success({
-            title: '등록',
-            message: '등록 되었습니다.',
-          })
-        } catch (error) {
-          this.$notify.error({
-            title: '등록 실패',
-            message: `status: ${error.response.status}`,
-          })
-        }
-      })
-    },
-  },
+					this.$notify.success({
+						title: '등록',
+						message: '등록 되었습니다.',
+					})
+				} catch (error) {
+					this.$notify.error({
+						title: '등록 실패',
+						message: `status: ${error.response.status}`,
+					})
+				}
+			})
+		},
+	},
 }
 </script>

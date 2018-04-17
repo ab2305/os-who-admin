@@ -38,12 +38,12 @@
 
 <script>
 export default {
-  props: ['error'],
-  methods: {
-    goBack() {
-      this.$router.go(-1)
-    },
-  },
+	props: ['error'],
+	methods: {
+		goBack() {
+			this.$router.go(-1)
+		},
+	},
 }
 </script>
 

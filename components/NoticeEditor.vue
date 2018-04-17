@@ -24,62 +24,62 @@
 
 <script>
 export default {
-  layout: 'authorized',
-  props: {
-    form: {
-      type: Object,
-      default: () => ({
-        title: '',
-        body: '',
-        isTop: false,
-      }),
-    },
-    isEdit: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      rules: {
-        title: [
-          { required: true, message: '제목을 입력해주세요.', trigger: 'blur' },
-          { max: 500, message: '최대 500자까지 입력할 수 있습니다.', trigger: 'blur' },
-        ],
-        body: [
-          { required: true, message: '내용을 입력해주세요.', trigger: 'blur' },
-        ],
-      },
-    }
-  },
-  methods: {
-    write() {
-      this.$refs.form.validate(async (isValid) => {
-        if (!isValid) {
-          return
-        }
+	layout: 'authorized',
+	props: {
+		form: {
+			type: Object,
+			default: () => ({
+				title: '',
+				body: '',
+				isTop: false,
+			}),
+		},
+		isEdit: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	data() {
+		return {
+			rules: {
+				title: [
+					{ required: true, message: '제목을 입력해주세요.', trigger: 'blur' },
+					{ max: 500, message: '최대 500자까지 입력할 수 있습니다.', trigger: 'blur' },
+				],
+				body: [
+					{ required: true, message: '내용을 입력해주세요.', trigger: 'blur' },
+				],
+			},
+		}
+	},
+	methods: {
+		write() {
+			this.$refs.form.validate(async (isValid) => {
+				if (!isValid) {
+					return
+				}
 
-        try {
-          if (this.isEdit) {
-            await this.$axios.$put(`notices/${this.$route.params.id}`, this.form)
-          } else {
-            await this.$axios.$post('notice', this.form)
-          }
+				try {
+					if (this.isEdit) {
+						await this.$axios.$put(`notices/${this.$route.params.id}`, this.form)
+					} else {
+						await this.$axios.$post('notice', this.form)
+					}
 
-          this.$router.push('/operation/notices')
+					this.$router.push('/operation/notices')
 
-          this.$notify.success({
-            title: this.isEdit ? '수정' : '등록',
-            message: this.isEdit ? '공지를 수정했습니다.' : '공지를 등록했습니다.',
-          })
-        } catch (error) {
-          this.$notify.error({
-            title: this.isEdit ? '수정 실패' : '등록 실패',
-            message: `status: ${error.response.status}`,
-          })
-        }
-      })
-    },
-  },
+					this.$notify.success({
+						title: this.isEdit ? '수정' : '등록',
+						message: this.isEdit ? '공지를 수정했습니다.' : '공지를 등록했습니다.',
+					})
+				} catch (error) {
+					this.$notify.error({
+						title: this.isEdit ? '수정 실패' : '등록 실패',
+						message: `status: ${error.response.status}`,
+					})
+				}
+			})
+		},
+	},
 }
 </script>

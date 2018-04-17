@@ -19,19 +19,19 @@
 
 <script>
 export default {
-  layout: 'authorized',
-  props: {
-    form: {
-      type: Object,
-      default: () => ({
-        name: '',
-        title: '',
-        body: '',
-        isTop: false,
-        userId: '',
-      }),
-    },
-  },
+	layout: 'authorized',
+	props: {
+		form: {
+			type: Object,
+			default: () => ({
+				name: '',
+				title: '',
+				body: '',
+				isTop: false,
+				userId: '',
+			}),
+		},
+	},
 }
 </script>
 
