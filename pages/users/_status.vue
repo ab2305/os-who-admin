@@ -122,7 +122,7 @@
         </el-table-column>
         <el-table-column label="이름(아이디)1">
           <template scope="scope">
-            <nuxt-link :to="`/users/active`">
+            <nuxt-link :to="`/user/${scope.row.id}`">
               {{ scope.row.name }}
               <br>
               {{ scope.row.email }}
@@ -156,10 +156,10 @@
             {{ scope.row.lastLoginedAt | moment('lll') }}
           </template>
         </el-table-column>
-        <el-table-column laebel="신고횟수" width="50">
-            <template scope="scope">
-                {{scope.row}}
-            </template>
+        <el-table-column label="신고횟수" width="80">
+          <template scope="scope">
+           {{ scope.row.scnt }}
+           </template>
         </el-table-column>
       </el-table>
     </div>
@@ -315,7 +315,7 @@ this.filteredList = filteredList
 download(isAll = true) {
 const list = isAll ? this.list : this.filteredList
 
-const formatted = [["No", "등급", "이름", "아이디", "휴대폰", "닉네임", "성별", "생년", "누구친 등록수", "우표", "무제한 이용권", "결제건수", "회원가입일", "최근접속일"]]
+const formatted = [["No", "등급", "이름", "아이디", "휴대폰", "닉네임", "성별", "생년", "누구친 등록수", "우표", "무제한 이용권", "결제건수", "회원가입일", "최근접속일", "신고당한횟수"]]
 
 formatted.push(...list.map(user => [
 user.id,
@@ -332,6 +332,7 @@ this.$options.filters.getUserPassInfo(user),
 user.billingHistories.length,
 this.$options.filters.moment(user.createdAt, "lll"),
 this.$options.filters.moment(user.lastLoginedAt, "lll"),
+user.scnt,
 ]))
 
 const download = (error, output) => {
