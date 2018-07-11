@@ -47,6 +47,7 @@
       :placeholder="currentPlaceholder"
       :name="name"
       :size="size"
+      :id="id"
       :disabled="disabled"
       :readonly="!filterable || multiple"
       :validate-event="false"
@@ -171,6 +172,7 @@
       value: {
         required: true
       },
+      id: String,
       size: String,
       disabled: Boolean,
       clearable: Boolean,
@@ -226,6 +228,12 @@
     },
 
     watch: {
+      disabled() {
+        this.$nextTick(() => {
+          this.resetInputHeight();
+        });
+      },
+
       placeholder(val) {
         this.cachedPlaceHolder = this.currentPlaceholder = val;
       },
@@ -248,6 +256,7 @@
       },
 
       query(val) {
+        if (val === null || val === undefined) return;
         this.$nextTick(() => {
           if (this.visible) this.broadcast('ElSelectDropdown', 'updatePopper');
         });
@@ -486,7 +495,10 @@
           if (!this.$refs.reference) return;
           let inputChildNodes = this.$refs.reference.$el.childNodes;
           let input = [].filter.call(inputChildNodes, item => item.tagName === 'INPUT')[0];
-          input.style.height = Math.max(this.$refs.tags.clientHeight + 6, sizeMap[this.size] || 36) + 'px';
+          const tags = this.$refs.tags;
+          input.style.height = this.selected.length === 0
+            ? (sizeMap[this.size] || 36) + 'px'
+            : Math.max(tags ? (tags.clientHeight + 6) : 0, sizeMap[this.size] || 36) + 'px';
           if (this.visible && this.emptyText !== false) {
             this.broadcast('ElSelectDropdown', 'updatePopper');
           }
@@ -660,8 +672,7 @@
       },
 
       getValueKey(item) {
-        const type = typeof item.value;
-        if (type === 'number' || type === 'string') {
+        if (Object.prototype.toString.call(item.value).toLowerCase() !== '[object object]') {
           return item.value;
         } else {
           return getValueByPath(item.value, this.valueKey);
@@ -677,7 +688,6 @@
       if (!this.multiple && Array.isArray(this.value)) {
         this.$emit('input', '');
       }
-      this.setSelected();
 
       this.debouncedOnInputChange = debounce(this.debounce, () => {
         this.onInputChange();
@@ -701,6 +711,7 @@
           this.inputWidth = this.$refs.reference.$el.getBoundingClientRect().width;
         }
       });
+      this.setSelected();
     },
 
     beforeDestroy() {
