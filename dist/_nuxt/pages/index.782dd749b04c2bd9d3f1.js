@@ -1,0 +1,1 @@
+webpackJsonp([36],{"/TYz":function(a,b,c){"use strict";Object.defineProperty(b,"__esModule",{value:!0});var d=c("Pmtg"),e=c("VU/8"),f=e(d.a,null,!1,null,null,null);f.options.__file="pages/index.vue",!1,b["default"]=f.exports},Pmtg:function(a,b){"use strict";b.a={asyncData:function(a){var b=a.redirect;b("/login")}}}});
