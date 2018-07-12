@@ -19,7 +19,7 @@ module.exports = {
     ],
   },
   css: [
-    'element-ui/packages/theme-default',
+    'element-ui/lib/theme-default/index.css',
     '~/assets/element-customized.scss',
     '~/assets/main.scss',
   ],

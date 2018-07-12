@@ -1,5 +1,4 @@
 import Axios from 'axios'
-import Vue from 'vue'
 
 // We cannot extend Axios.prototype
 const axiosExtraProto = {}
@@ -80,7 +79,7 @@ const baseURL = process.browser
 
 
 export default (ctx, inject) => {
-  const { app, store, req } = ctx
+  const { req } = ctx
 
   // Create a fresh objects for all default header scopes
   // Axios creates only one which is shared across SSR requests!
@@ -100,8 +99,8 @@ export default (ctx, inject) => {
   
   // Default headers
   headers.common = (req && req.headers) ? Object.assign({}, req.headers) : {}
-  delete headers.common.host
-  delete headers.common.accept
+  delete headers.common['accept']
+  delete headers.common['host']
   
 
   // Create new axios instance
@@ -127,10 +126,10 @@ export default (ctx, inject) => {
   
 
   
-  
-  // Error handler
-  axios.interceptors.response.use(undefined, err => errorHandler(err, ctx));
 
+  // Error handler
+  
+  axios.interceptors.response.use(undefined, err => errorHandler(err, ctx));
   
 
   // Inject axios to the context as $axios

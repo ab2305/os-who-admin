@@ -13,7 +13,8 @@
     "precommit": "yarn lint"
   },
   "dependencies": {
-    "babili-webpack-plugin": "^0.1.2",
+    "babili-webpack-plugin": "0.1.1",
+    "element-theme-default": "^1.4.13",
     "nuxt": "^1.0.0-rc8"
   },
   "devDependencies": {

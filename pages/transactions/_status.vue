@@ -200,9 +200,7 @@ export default {
 layout: "authorized",
 validate: ({ params }) => /^(:?payments|refunds)$/.test(params.status),
 
-async asyncData({
-app, route,
-}) {
+async asyncData({ app, route }) {
 const params = {}
 if (route.params.status === "refunds") {
 params.refunded = true
@@ -229,7 +227,10 @@ refundMemo: _.get(transactionlist, "refundMemo", ""),
 }
 
 return {
-transactionCount, transactionlist, memoForm, refundMemoForm,
+transactionCount,
+transactionlist,
+memoForm,
+refundMemoForm,
 }
 },
 
@@ -261,7 +262,13 @@ methods: {
 async filter() {
 const params = {}
 const {
-stamp, subscription, query, category, toDate, fromDate, dateValue,
+stamp,
+subscription,
+query,
+category,
+toDate,
+fromDate,
+dateValue,
 } = this.form
 if (this.status === "refunds") {
 params.refunded = true
@@ -287,7 +294,11 @@ params.product = stamp
 if (subscription !== "전체") {
 params.product = subscription
 }
-if (!_.isEmpty(toDate) && !_.isEmpty(fromDate) && _.isEmpty(_.compact(dateValue))) {
+if (
+!_.isEmpty(toDate) &&
+        !_.isEmpty(fromDate) &&
+        _.isEmpty(_.compact(dateValue))
+) {
 params.from = fromDate
 params.to = toDate
 }
@@ -313,7 +324,20 @@ const selected = this.selection[0]
 const select = _.filter(this.transactionlist, o => o.id === selected)
 
 const list = isAll ? this.transactionlist : select
-const formatted = [["No", "구매번호", "이름", "아이디", "휴대폰", "결제일시", "구매아이템", "금액", "구매횟수", "환불내역"]]
+const formatted = [
+[
+"No",
+"구매번호",
+"이름",
+"아이디",
+"휴대폰",
+"결제일시",
+"구매아이템",
+"금액",
+"구매횟수",
+"환불내역",
+],
+]
 
 formatted.push(...list.map(data => [
 data.id,
@@ -329,14 +353,13 @@ data.refundedAt,
 ]))
 
 const download = (error, output) => {
-const blob = new Blob(
-[output],
-{ type: "text/plain;charset=utf-8" },
-)
+const blob = new Blob([output], { type: "text/plain;charset=utf-8" })
 
 FileSaver.saveAs(
 blob,
-`billingHistories ${isAll ? "selected" : "filtered"} ${this.$moment().format("lll")}.csv`,
+`billingHistories ${
+isAll ? "selected" : "filtered"
+} ${this.$moment().format("lll")}.csv`,
 )
 }
 
@@ -347,24 +370,41 @@ const today = moment().format("YYYY-MM-DD")
 
 switch (params) {
 case 1:
-this.form.fromDate = moment().add(-1, "days").format("YYYY-MM-DD")
+this.form.fromDate = moment()
+.add(-1, "days")
+.format("YYYY-MM-DD")
 this.form.toDate = today
 break
 case 2:
-this.form.fromDate = moment().add(-2, "days").format("YYYY-MM-DD")
+this.form.fromDate = moment()
+.add(-2, "days")
+.format("YYYY-MM-DD")
 this.form.toDate = today
 break
 case 3:
-this.form.fromDate = moment().add(-8, "days").format("YYYY-MM-DD")
+this.form.fromDate = moment()
+.add(-8, "days")
+.format("YYYY-MM-DD")
 this.form.toDate = today
 break
 case 4:
-this.form.fromDate = moment().subtract(1, "months").startOf("month").format("YYYY-MM-DD")
-this.form.toDate = moment().startOf("month").format("YYYY-MM-DD")
+this.form.fromDate = moment()
+.subtract(1, "months")
+.startOf("month")
+.format("YYYY-MM-DD")
+this.form.toDate = moment()
+.startOf("month")
+.format("YYYY-MM-DD")
 break
 case 5:
-this.form.fromDate = moment().subtract(2, "months").startOf("month").format("YYYY-MM-DD")
-this.form.toDate = moment().subtract(1, "months").startOf("month").format("YYYY-MM-DD")
+this.form.fromDate = moment()
+.subtract(2, "months")
+.startOf("month")
+.format("YYYY-MM-DD")
+this.form.toDate = moment()
+.subtract(1, "months")
+.startOf("month")
+.format("YYYY-MM-DD")
 break
 default:
 this.form.fromDate = undefined
@@ -377,12 +417,15 @@ const params = {}
 if (this.status === "refunds") {
 params.refunded = true
 }
-const changeTransactionlist = await this.$axios.$get("/billingHistories", {
+const changeTransactionlist = await this.$axios.$get(
+"/billingHistories",
+{
 params: _.assign(params, {
 limit: 10,
 page: this.currentPage,
 }),
-})
+},
+)
 this.transactionlist = changeTransactionlist
 return this.currentPage
 },
@@ -395,7 +438,10 @@ this.selectedTransaction = selectedTransaction
 async refund(transaction) {
 try {
 this.refunded = { refunded: true }
-await this.$axios.$put(`/billingHistories/${transaction.id}`, this.refunded)
+await this.$axios.$put(
+`/billingHistories/${transaction.id}`,
+this.refunded,
+)
 this.$router.replace("/reload")
 } catch (error) {
 this.$notify({
@@ -409,7 +455,17 @@ async memo(transaction) {
 try {
 this.memoForm = { memo: transaction.memo }
 this.refundMemoForm = { refundMemo: transaction.refundMemo }
-if (transaction.refunded === false) { await this.$axios.$put(`/billingHistories/${transaction.id}`, this.memoForm) } else { await this.$axios.$put(`/billingHistories/${transaction.id}`, this.refundMemoForm) }
+if (transaction.refunded === false) {
+await this.$axios.$put(
+`/billingHistories/${transaction.id}`,
+this.memoForm,
+)
+} else {
+await this.$axios.$put(
+`/billingHistories/${transaction.id}`,
+this.refundMemoForm,
+)
+}
 this.$notify.success({
 message: "메모가 수정되었습니다.",
 })
@@ -441,7 +497,7 @@ message: error,
 </script>
 
 <style lang="scss" module>
-@import '~assets/variables';
+@import "~assets/variables";
 
 #filterTable {
   width: 100%;
@@ -451,9 +507,9 @@ message: error,
     margin-bottom: 9px;
   }
 
-#inquiry {
+  #inquiry {
     text-align: center;
-}
+  }
   th {
     width: 80px;
   }
@@ -466,7 +522,7 @@ message: error,
     margin-bottom: initial;
   }
 
-   :global(.el-option) {
+  :global(.el-option) {
     margin-right: 10px;
   }
 
@@ -496,11 +552,11 @@ message: error,
   }
 }
 
-
 #list {
   margin-top: $gutter-y;
 
-  table th, td{
+  table th,
+  td {
     text-align: center;
   }
 

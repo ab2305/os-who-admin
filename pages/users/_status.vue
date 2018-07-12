@@ -111,7 +111,7 @@
     </el-form>
 
     <div :id="$style.list">
-      <div :id="$style.total">현재 총 회원 수: {{ list.length.toLocaleString() }}명</div>
+      <div :id="$style.total">현재 총 회원 수: {{ usersCount.length }}명</div>
 
       <el-table :data="filteredList" border class="compact">
         <el-table-column property="id" label="No" width="50"></el-table-column>
@@ -120,7 +120,7 @@
             {{ scope.row | getUserStatus('name') }}
           </template>
         </el-table-column>
-        <el-table-column label="이름(아이디)1">
+        <el-table-column label="이름(아이디)">
           <template scope="scope">
             <nuxt-link :to="`/user/${scope.row.id}`">
               {{ scope.row.name }}
@@ -145,7 +145,7 @@
             {{ scope.row | getUserPassInfo }}
           </template>
         </el-table-column>
-        <el-table-column property="billingHistories.length"label="결제건수" width="100"></el-table-column>
+        <el-table-column property="billingHistories.length" label="결제건수" width="100"></el-table-column>
         <el-table-column label="회원가입일" width="100">
           <template scope="scope">
             {{ scope.row.createdAt | moment('lll') }}
@@ -164,6 +164,10 @@
       </el-table>
     </div>
 
+    <el-pagination page-size="30" layout="prev, pager, next" @current-change="handleCurrentChange"
+    :current-page.sync="currentPage" :total="usersCount.length">
+    </el-pagination>
+
     <div :id="$style.downloadButtons">
       <el-button @click="download(false)">현재 화면 목록 엑셀 다운로드</el-button>
       <el-button @click="download()">회원 전체 목록 엑셀 다운로드</el-button>
@@ -173,6 +177,7 @@
 
 <script>
 import _ from "lodash"
+import moment from "moment"
 import csvStringify from "csv-stringify"
 import FileSaver from "file-saver"
 
@@ -181,13 +186,36 @@ layout: "authorized",
 validate: ({ params }) => /^(:?active|deleted)$/.test(params.status),
 
 async asyncData({ app, route }) {
-const endpoint = route.params.status === "active" ? "users" : "seceders"
+const params = {}
+const status = route.params.status
+const endpoint = status === "active" ? "users" : "seceders"
 
-const list = await app.$axios.$get(`/${endpoint}`)
+// const list = await app.$axios.$get(`/${endpoint}`)
+
+const list = await app.$axios.$get(`/${endpoint}`, {
+params: _.assign(params, {
+limit: 30,
+page: 1,
+}),
+})
+
+const usersCount = await app.$axios.$get(
+`/${endpoint}`,
+{
+params: _.assign(params, {
+length: true,
+}),
+},
+)
 
 const filteredList = _.cloneDeep(list)
 
-return { list, filteredList }
+return {
+status,
+list,
+usersCount,
+filteredList,
+}
 },
 data() {
 return {
@@ -230,8 +258,13 @@ picker.$emit("pick", [start, end])
 {
 text: "지난달",
 onClick: (picker) => {
-const start = this.getToday().subtract(1, "month").startOf("month")
-const end = this.getToday().subtract(1, "month").endOf("month").startOf("day")
+const start = this.getToday()
+.subtract(1, "month")
+.startOf("month")
+const end = this.getToday()
+.subtract(1, "month")
+.endOf("month")
+.startOf("day")
 
 picker.$emit("pick", [start, end])
 },
@@ -239,12 +272,12 @@ picker.$emit("pick", [start, end])
 ],
 },
 birthYearFrom: {
-disabledDate: date => this.form.birthYearRange[1] && date > this.form.birthYearRange[1]
-,
+disabledDate: date =>
+this.form.birthYearRange[1] && date > this.form.birthYearRange[1],
 },
 birthYearTo: {
-disabledDate: date => this.form.birthYearRange[0] && date < this.form.birthYearRange[0]
-,
+disabledDate: date =>
+this.form.birthYearRange[0] && date < this.form.birthYearRange[0],
 },
 },
 form: {
@@ -255,67 +288,152 @@ status: undefined,
 category: "name",
 query: "",
 },
+currentPage: 1,
 }
 },
 methods: {
 getToday() {
 return this.$moment().startOf("day")
 },
-filter() {
+async filter() {
+const params = {}
+const endpoint = this.status === "active" ? "users" : "seceders"
+let filteredList
 const {
-signupDateRange, birthYearRange, sex, status, category, query,
+signupDateRange,
+birthYearRange,
+sex,
+status,
+category,
+query,
 } = this.form
 
-const filteredList = _.chain(this.list).filter(((user) => {
-if (signupDateRange[0] && signupDateRange[1]) {
-if (!this.$moment(user.createdAt).isBetween(
-signupDateRange[0],
-signupDateRange[1],
-"day",
-"[]",
-)) {
-return false
-}
+if (!_.isEmpty(_.compact(signupDateRange))) {
+/* eslint-enable prefer-destructuring */
+params.signupFrom = moment(signupDateRange[0]).format("YYYY-MM-DD")
+params.signupTo = moment(signupDateRange[1]).format("YYYY-MM-DD")
+/* eslint-enable prefer-destructuring */
 }
 
-if (birthYearRange[0] && birthYearRange[1]) {
-if (!this.$moment(user.birthYear, "YYYY").isBetween(
-birthYearRange[0],
-birthYearRange[1],
-"year",
-"[]",
-)) {
-return false
-}
+if (!_.isEmpty(_.compact(birthYearRange))) {
+/* eslint-enable prefer-destructuring */
+params.birthYearFrom = moment(birthYearRange[0]).format("YYYY")
+params.birthYearTo = moment(birthYearRange[1]).format("YYYY")
+/* eslint-enable prefer-destructuring */
 }
 
-if (sex) {
-if (user.gender !== sex) {
-return false
-}
+if (!_.isEmpty(sex)) {
+params.sex = sex
 }
 
-if (status) {
-if (this.$options.filters.getUserStatus(user, "value") !== status) {
-return false
-}
+if (!_.isEmpty(status)) {
+params.status = status
 }
 
-if (query) {
-if (!user[category].toLowerCase().includes(query.toLowerCase())) {
-return false
+if (!_.isEmpty(query) && category === "name") {
+params.name = query
 }
+if (!_.isEmpty(query) && category === "email") {
+params.email = query
+}
+if (!_.isEmpty(query) && category === "phone") {
+params.phone = query
 }
 
-return true
-})).value()
+// filteredList = _.chain(this.list)
+//   .filter(user => {
+//     if (signupDateRange[0] && signupDateRange[1]) {
+//       if (
+//         !this.$moment(user.createdAt).isBetween(
+//           signupDateRange[0],
+//           signupDateRange[1],
+//           "day",
+//           "[]"
+//         )
+//       ) {
+//         return false;
+//       }
+//     }
+
+//     if (birthYearRange[0] && birthYearRange[1]) {
+//       if (
+//         !this.$moment(user.birthYear, "YYYY").isBetween(
+//           birthYearRange[0],
+//           birthYearRange[1],
+//           "year",
+//           "[]"
+//         )
+//       ) {
+//         return false;
+//       }
+//     }
+
+//     if (sex) {
+//       if (user.gender !== sex) {
+//         return false;
+//       }
+//     }
+
+//     if (status) {
+//       if (this.$options.filters.getUserStatus(user, "value") !== status) {
+//         return false;
+//       }
+//     }
+
+//     if (query) {
+//       if (!user[category].toLowerCase().includes(query.toLowerCase())) {
+//         return false;
+//       }
+//     }
+
+//     return true;
+//   })
+//   .value();
+
+this.currentPage = 1
+
+params.limit = 30
+params.page = this.currentPage
+
+filteredList = await this.$axios.$get(
+`/${endpoint}`,
+{
+params,
+},
+)
+
+const filteredCount = await this.$axios.$get(
+`/${endpoint}`,
+{
+params: _.omit(params, ["limit", "page"]),
+},
+)
 
 this.filteredList = filteredList
+this.usersCount.length = filteredCount.length
 },
 download(isAll = true) {
 const list = isAll ? this.list : this.filteredList
 
-const formatted = [["No", "등급", "이름", "아이디", "휴대폰", "닉네임", "성별", "생년", "누구친 등록수", "우표", "무제한 이용권", "결제건수", "회원가입일", "최근접속일", "신고당한횟수"]]
+const formatted = [
+[
+"No",
+"등급",
+"이름",
+"아이디",
+"휴대폰",
+"닉네임",
+"성별",
+"생년",
+"누구친 등록수",
+"우표",
+"무제한 이용권",
+"결제건수",
+"회원가입일",
+"최근접속일",
+"신고당한횟수",
+],
+]
 
 formatted.push(...list.map(user => [
 user.id,
@@ -336,10 +454,7 @@ user.scnt,
 ]))
 
 const download = (error, output) => {
-const blob = new Blob(
-[output],
-{ type: "text/plain;charset=utf-8" },
-)
+const blob = new Blob([output], { type: "text/plain;charset=utf-8" })
 
 FileSaver.saveAs(
 blob,
@@ -349,12 +464,29 @@ blob,
 
 csvStringify(formatted, download)
 },
+async handleCurrentChange() {
+const params = {}
+const endpoint = this.status === "active" ? "users" : "seceders"
+
+const userList = await this.$axios.$get(
+`/${endpoint}`,
+{
+params: _.assign(params, {
+limit: 30,
+page: this.currentPage,
+}),
+},
+)
+
+this.filteredList = userList
+return this.currentPage
+},
 },
 }
 </script>
 
 <style lang="scss" module>
-@import '~assets/variables';
+@import "~assets/variables";
 
 #filterTable {
   width: 100%;
